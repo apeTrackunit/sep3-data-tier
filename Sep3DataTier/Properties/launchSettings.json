@@ -1,0 +1,13 @@
+﻿{
+  "profiles": {
+    "Sep3DataTier": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "applicationUrl": "http://localhost:5266;https://localhost:7065",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

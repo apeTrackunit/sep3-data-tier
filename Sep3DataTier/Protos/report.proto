@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+option csharp_namespace = "Sep3DataTier";
+option java_multiple_files = true;
+option java_package = "via.sep3.logic.protobuf.report";
+
+message ReportFilter {
+}
+
+message ReportList {
+  repeated ReportObject reports = 1;
+}
+
+message ReportObject {
+  string date = 1;
+  string time = 2;
+  bytes proof = 3;
+  string description = 4;
+  string status = 5;
+  LocationObject location = 6;
+}
+
+message LocationObject {
+  double latitude = 1;
+  double longitude = 2;
+  int32 size = 3;
+}
+
+service Report {
+  rpc GetReports(ReportFilter) returns (ReportList);
+}
