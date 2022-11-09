@@ -24,3 +24,4 @@ var app = builder.Build();
 app.MapGrpcService<ReportService>();
 
 app.Run();
+
