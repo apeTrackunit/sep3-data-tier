@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sep3DataTier", "Sep3DataTier\Sep3DataTier.csproj", "{DF3F2523-82EE-4A58-AF85-81CAC9375322}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocalTest", "LocalTest\LocalTest.csproj", "{67CA76D4-BA2B-4A77-87E6-B07AD7F14E16}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{DF3F2523-82EE-4A58-AF85-81CAC9375322}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF3F2523-82EE-4A58-AF85-81CAC9375322}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF3F2523-82EE-4A58-AF85-81CAC9375322}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67CA76D4-BA2B-4A77-87E6-B07AD7F14E16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67CA76D4-BA2B-4A77-87E6-B07AD7F14E16}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67CA76D4-BA2B-4A77-87E6-B07AD7F14E16}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67CA76D4-BA2B-4A77-87E6-B07AD7F14E16}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
