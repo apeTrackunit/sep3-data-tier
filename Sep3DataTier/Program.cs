@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection;
+using Sep3DataTier.Database;
 using Sep3DataTier.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,11 +19,13 @@ builder.WebHost.ConfigureKestrel(options =>
 
 // Add services to the container.
 builder.Services.AddGrpc();
-
+builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<DatabaseContext>();
+builder.Services.AddDbContext<DatabaseContext>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 app.MapGrpcService<ReportService>();
-
+app.MapGrpcService<AuthService>();
+app.UseAuthentication();
 app.Run();
 
