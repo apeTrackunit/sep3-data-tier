@@ -1,0 +1,20 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "Sep3DataTier";
+
+service Auth
+{
+  rpc Register(RegisterUserInput) returns (RegisterUserOutput);
+}
+
+message RegisterUserInput
+{
+  string name = 1;
+  string email = 2;
+  string password = 3;
+}
+
+message RegisterUserOutput
+{
+  bool isRegistered = 1;
+}
