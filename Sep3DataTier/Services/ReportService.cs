@@ -35,10 +35,13 @@ public class ReportService : Report.ReportBase
                     Longitude = report.Location.Longitude,
                     Size = report.Location.Size
                 },
-                Proof = ByteString.CopyFrom(report.Proof) ,
                 Status = report.Status,
                 Time = new string($"{report.TimeOnly.Hour}:{report.TimeOnly.Minute}:{report.TimeOnly.Second}")
             };
+            if (proofIsNull)
+                obj.Proof = ByteString.Empty;
+            else
+                obj.Proof = ByteString.CopyFrom(report.Proof);
             data.Add(obj);
         }
 
