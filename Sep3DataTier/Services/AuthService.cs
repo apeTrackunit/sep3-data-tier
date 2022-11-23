@@ -8,8 +8,22 @@ public class AuthService : Auth.AuthBase
 {
     private readonly IUserEfcDao userEfcDao;
 
-    public async override Task<RegisterUserOutput> Register(RegisterUserInput request, ServerCallContext context)
+    public AuthService(IUserEfcDao userEfcDao)
     {
-        throw new NotImplementedException();
+        this.userEfcDao = userEfcDao;
+    }
+    
+    public override async Task<RegisterUserOutput> Register(RegisterUserInput request, ServerCallContext context)
+    {
+        ApplicationUser userToCreate = new ApplicationUser(request.Email, request.Username);
+        ApplicationUser user = await userEfcDao.RegisterUserAsync(userToCreate, request.Password);
+
+        return await Task.FromResult(new RegisterUserOutput
+        {
+            Email = user.Email,
+            Id = user.Id,
+            Password = user.PasswordHash,
+            Username = user.UserName
+        });
     }
 }

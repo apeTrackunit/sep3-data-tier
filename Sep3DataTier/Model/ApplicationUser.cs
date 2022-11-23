@@ -9,16 +9,12 @@ public class ApplicationUser : IdentityUser
     public int Id { get; set; }
     [Required]
     public string Email { get; set; }
-    [Required]
-    public string Username { get; set; }
-    [Required]
-    public string Password { get; set; }
 
-    public ApplicationUser(string email, string username, string password)
+
+    public ApplicationUser(string email, string username)
     {
         Email = email;
-        Username = username;
-        Password = password;
+        UserName = username;
     }
 
     public ApplicationUser()

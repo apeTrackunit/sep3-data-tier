@@ -21,12 +21,12 @@ public class DatabaseContext : IdentityDbContext<ApplicationUser>
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseNpgsql("" +
-                                 "Host=mouse.db.elephantsql.com;" +
-                                 "Port=5432;" +
-                                 "Database=mdvlimng;" +
-                                 "Username=mdvlimng;" +
-                                 "Password=7UAYlVQ88oSXRzRrKMHHpx9MIwkYCNzJ",
-            options => options.UseAdminDatabase("mdvlimng"));
+                                 DatabaseCredentials.Host +
+                                 DatabaseCredentials.Port +
+                                 DatabaseCredentials.Database +
+                                 DatabaseCredentials.Username +
+                                 DatabaseCredentials.Password,
+            options => options.UseAdminDatabase(DatabaseCredentials.AdminDatabase));
 
         // optionsBuilder.UseNpgsql($"Host=localhost;Port=5432;Database=cleanup;Username={DatabaseCredentials.PostgresqlUsername};Password={DatabaseCredentials.PostgresqlPassword}",
             // options => options.UseAdminDatabase("cleanup"));
