@@ -11,6 +11,11 @@ public class ReportService : Report.ReportBase
 {
     private readonly IReportEfcDao reportEfcDao;
 
+    public ReportService(IReportEfcDao reportEfcDao)
+    {
+        this.reportEfcDao = reportEfcDao;
+    }
+
     public override async Task<ReportList> GetReports(ReportFilter request, ServerCallContext context)
     {
         ICollection<ReportObject> data = new List<ReportObject>();
@@ -19,9 +24,10 @@ public class ReportService : Report.ReportBase
 
         foreach (Model.Report report in reportsFromDatabase)
         {
+            bool proofIsNull = report.Proof == null;
             ReportObject obj = new ReportObject
             {
-                Date = new string($"{report.Date[0]}-{report.Date[1]}-{report.Date[2]}"),
+                Date = new string($"{report.DateOnly.Year}-{report.DateOnly.Month}-{report.DateOnly.Day}"),
                 Description = report.Description,
                 Location = new LocationObject
                 {
@@ -29,9 +35,9 @@ public class ReportService : Report.ReportBase
                     Longitude = report.Location.Longitude,
                     Size = report.Location.Size
                 },
-                Proof = ByteString.CopyFrom(report.Proof),
+                Proof = ByteString.CopyFrom(report.Proof) ,
                 Status = report.Status,
-                Time = new string($"{report.Time[0]}:{report.Time[1]}:{report.Time[2]}")
+                Time = new string($"{report.TimeOnly.Hour}:{report.TimeOnly.Minute}:{report.TimeOnly.Second}")
             };
             data.Add(obj);
         }

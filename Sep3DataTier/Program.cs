@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection;
+using Sep3DataTier.Database;
+using Sep3DataTier.Repository;
 using Sep3DataTier.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +19,10 @@ builder.WebHost.ConfigureKestrel(options =>
 
 // Add services to the container.
 builder.Services.AddGrpc();
+
+//Efc services
+builder.Services.AddDbContext<DatabaseContext>();
+builder.Services.AddScoped<IReportEfcDao, ReportEfcDaoImpl>();
 
 var app = builder.Build();
 
