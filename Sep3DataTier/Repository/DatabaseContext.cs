@@ -18,9 +18,6 @@ public class DatabaseContext : DbContext
                                  "Username=mdvlimng;" +
                                  "Password=7UAYlVQ88oSXRzRrKMHHpx9MIwkYCNzJ",
             options => options.UseAdminDatabase("mdvlimng"));
-
-        //optionsBuilder.UseNpgsql($"Host=localhost;Port=5432;Database=cleanup;Username={DatabaseCredentials.PostgresqlUsername};Password={DatabaseCredentials.PostgresqlPassword}",
-        //options => options.UseAdminDatabase("cleanup"));
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
