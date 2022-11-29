@@ -5,6 +5,8 @@ using Sep3DataTier.Database;
 
 namespace Sep3DataTier.Repository;
 
+using Microsoft.EntityFrameworkCore;
+
 public class UserEfcDao : IUserEfcDao
 {
     private readonly DatabaseContext context;
@@ -35,6 +37,36 @@ public class UserEfcDao : IUserEfcDao
         }
     }
 
+    public async Task<bool> LoginUser(ApplicationUser user, string requestPassword)
+    {
+        var result = await userManager.CheckPasswordAsync(user, requestPassword);
+        
+        if (!result)
+        {
+            throw new Exception("Incorrect credentials");
+        }
+        return true;
+    }
+    
+    public async Task<ApplicationUser> GetUserByEmailAsync(string email)
+    {
+        try
+        {
+            var user = await context.Users.Where(user => user.Email == email).FirstOrDefaultAsync();
+
+            if (user == null)
+            {
+                throw new Exception("User not found");
+            }
+
+            return user;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
+    }
+    
     public async Task<String?> GetUserRoleAsync(ApplicationUser user)
     {
         try

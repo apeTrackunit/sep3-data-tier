@@ -14,14 +14,14 @@ public class AuthService : Auth.AuthBase
         this.userEfcDao = userEfcDao;
     }
     
-    public override async Task<RegisterUserOutput> Register(RegisterUserInput request, ServerCallContext context)
+    public override async Task<UserOutput> Register(RegisterUserInput request, ServerCallContext context)
     {
         ApplicationUser userToCreate = new ApplicationUser(request.Email, request.Username);
         ApplicationUser user = await userEfcDao.RegisterUserAsync(userToCreate, request.Password);
         
         var userRole = await userEfcDao.GetUserRoleAsync(user);
         
-        return await Task.FromResult(new RegisterUserOutput
+        return await Task.FromResult(new UserOutput
         {
             Id = user.Id,
             Username = user.UserName,
@@ -30,4 +30,29 @@ public class AuthService : Auth.AuthBase
             Role = userRole
         });
     }
+    
+    
+    public override async Task<UserOutput> LoginUser(LoginUserInput request, ServerCallContext context)
+    {
+        ApplicationUser user = await userEfcDao.GetUserByEmailAsync(request.Email);
+
+        bool userLoggingIn = await userEfcDao.LoginUser(user,request.Password);
+        
+        if (!userLoggingIn)
+        {
+            throw new Exception("Wrong credentials");
+        }
+
+        var userRole = await userEfcDao.GetUserRoleAsync(user);
+
+        return await Task.FromResult(new UserOutput
+        {
+            Id = user.Id,
+            Username = user.UserName,
+            Email = user.Email,
+            Password = user.PasswordHash,
+            Role = userRole
+        });
+    }
+
 }
