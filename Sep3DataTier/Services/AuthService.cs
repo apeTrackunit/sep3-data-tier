@@ -7,19 +7,19 @@ namespace Sep3DataTier.Services;
 
 public class AuthService : Auth.AuthBase
 {
-    private readonly IUserEfcDao userEfcDao;
+    private readonly IUserDao userDao;
 
-    public AuthService(IUserEfcDao userEfcDao)
+    public AuthService(IUserDao userDao)
     {
-        this.userEfcDao = userEfcDao;
+        this.userDao = userDao;
     }
     
     public override async Task<UserOutput> Register(RegisterUserInput request, ServerCallContext context)
     {
         ApplicationUser userToCreate = new ApplicationUser(request.Email, request.Username);
-        ApplicationUser user = await userEfcDao.RegisterUserAsync(userToCreate, request.Password);
+        ApplicationUser user = await userDao.RegisterUserAsync(userToCreate, request.Password);
         
-        var userRole = await userEfcDao.GetUserRoleAsync(user);
+        var userRole = await userDao.GetUserRoleAsync(user);
         
         return await Task.FromResult(new UserOutput
         {
@@ -34,16 +34,16 @@ public class AuthService : Auth.AuthBase
     
     public override async Task<UserOutput> LoginUser(LoginUserInput request, ServerCallContext context)
     {
-        ApplicationUser user = await userEfcDao.GetUserByEmailAsync(request.Email);
+        ApplicationUser user = await userDao.GetUserByEmailAsync(request.Email);
 
-        bool userLoggingIn = await userEfcDao.LoginUser(user,request.Password);
+        bool userLoggingIn = await userDao.LoginUser(user,request.Password);
         
         if (!userLoggingIn)
         {
             throw new Exception("Wrong credentials");
         }
 
-        var userRole = await userEfcDao.GetUserRoleAsync(user);
+        var userRole = await userDao.GetUserRoleAsync(user);
 
         return await Task.FromResult(new UserOutput
         {
@@ -57,9 +57,9 @@ public class AuthService : Auth.AuthBase
 
     public override async Task<UserOutput> GetUserByEmail(GetUserByEmailInput request, ServerCallContext context)
     {
-        ApplicationUser user = await userEfcDao.GetUserByEmailAsync(request.Email);
+        ApplicationUser user = await userDao.GetUserByEmailAsync(request.Email);
 
-        var userRole = await userEfcDao.GetUserRoleAsync(user);
+        var userRole = await userDao.GetUserRoleAsync(user);
 
         return await Task.FromResult(new UserOutput
         {
