@@ -4,7 +4,8 @@ option csharp_namespace = "Sep3DataTier";
 
 service Auth
 {
-  rpc Register(RegisterUserInput) returns (RegisterUserOutput);
+  rpc Register(RegisterUserInput) returns (UserOutput);
+  rpc LoginUser(LoginUserInput) returns (UserOutput);
 }
 
 message RegisterUserInput
@@ -14,11 +15,17 @@ message RegisterUserInput
   string password = 3;
 }
 
-message RegisterUserOutput
+message UserOutput
 {
   int32 id = 1;
   string username = 2;
   string email = 3;
   string password = 4;
   string role = 5;
+}
+
+message LoginUserInput
+{
+  string email=1;
+  string password=2;
 }
