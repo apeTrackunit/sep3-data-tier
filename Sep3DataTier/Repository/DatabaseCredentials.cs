@@ -7,6 +7,6 @@ public class DatabaseCredentials
     public static string Database { get; } = "Database=mdvlimng;";
     public static string Username { get; } = "Username=mdvlimng;";
     public static string Password { get; } = "Password=7UAYlVQ88oSXRzRrKMHHpx9MIwkYCNzJ";
-    public static string AdminDatabase = "mdvlimng";
+    public static string AdminDatabase { get; } = "mdvlimng";
 
 }

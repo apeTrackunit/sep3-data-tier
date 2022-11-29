@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection;
+using Model;
 using Sep3DataTier.Database;
+using Sep3DataTier.Repository;
 using Sep3DataTier.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,11 +19,16 @@ builder.WebHost.ConfigureKestrel(options =>
     // Setup a HTTP/2 endpoint without TLS.
     options.ListenLocalhost(5266, o => o.Protocols = HttpProtocols.Http2);
 });
-
 // Add services to the container.
+
 builder.Services.AddGrpc();
-builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<DatabaseContext>();
+
+//Efc services
+builder.Services.AddScoped<IUserEfcDao, UserEfcDao>();
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<DatabaseContext>();
 builder.Services.AddDbContext<DatabaseContext>();
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Model;
 using Sep3DataTier.Repository;
 
 namespace Sep3DataTier.Database;
 
-public class DatabaseContext : IdentityDbContext<ApplicationUser>
+public class DatabaseContext : IdentityDbContext<ApplicationUser, IdentityRole, string>
 {
     public DbSet<Location> Locations { get; set; }
     public DbSet<Model.Report> Reports { get; set; }
@@ -38,7 +39,13 @@ public class DatabaseContext : IdentityDbContext<ApplicationUser>
         modelBuilder.Entity<Model.Report>()
             .HasKey(report => report.Id);
         modelBuilder.Entity<ApplicationUser>().HasKey(user => user.Id);
+        modelBuilder.Entity<IdentityRole>().HasData(GenerateIdentityRole("User"));
+        modelBuilder.Entity<IdentityRole>().HasData(GenerateIdentityRole("Admin"));
         base.OnModelCreating(modelBuilder);
-
-    }   
+        
+    }
+    private static IdentityRole GenerateIdentityRole(string name)
+    {
+        return new IdentityRole(name) {NormalizedName = name.ToUpperInvariant()};
+    }
 }

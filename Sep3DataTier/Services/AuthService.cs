@@ -1,4 +1,5 @@
 ﻿using Grpc.Core;
+using Microsoft.AspNetCore.Identity;
 using Model;
 using Sep3DataTier.Repository;
 
@@ -17,13 +18,14 @@ public class AuthService : Auth.AuthBase
     {
         ApplicationUser userToCreate = new ApplicationUser(request.Email, request.Username);
         ApplicationUser user = await userEfcDao.RegisterUserAsync(userToCreate, request.Password);
-
+        var userRole = await userEfcDao.GetUserRoleAsync(user);
         return await Task.FromResult(new RegisterUserOutput
         {
-            Email = user.Email,
             Id = user.Id,
+            Username = user.UserName,
+            Email = user.Email,
             Password = user.PasswordHash,
-            Username = user.UserName
+            Role = userRole
         });
     }
 }
