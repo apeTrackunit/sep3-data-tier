@@ -55,4 +55,19 @@ public class AuthService : Auth.AuthBase
         });
     }
 
+    public override async Task<UserOutput> GetUserByEmail(GetUserByEmailInput request, ServerCallContext context)
+    {
+        ApplicationUser user = await userEfcDao.GetUserByEmailAsync(request.Email);
+
+        var userRole = await userEfcDao.GetUserRoleAsync(user);
+
+        return await Task.FromResult(new UserOutput
+        {
+            Id = user.Id,
+            Username = user.UserName,
+            Email = user.Email,
+            Password = user.PasswordHash,
+            Role = userRole
+        });
+    }
 }
