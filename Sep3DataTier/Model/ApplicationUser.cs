@@ -9,8 +9,7 @@ public class ApplicationUser : IdentityUser
     public int Id { get; set; }
     [Required]
     public string Email { get; set; }
-
-
+    
     public ApplicationUser(string email, string username)
     {
         Email = email;

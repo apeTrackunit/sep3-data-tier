@@ -12,8 +12,7 @@ public class DatabaseContext : IdentityDbContext<ApplicationUser, IdentityRole, 
     public DbSet<Model.Report> Reports { get; set; }
     
     public DbSet<ApplicationUser> Users { get; set; }
-
-
+    
     public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)
     {
         
@@ -28,9 +27,6 @@ public class DatabaseContext : IdentityDbContext<ApplicationUser, IdentityRole, 
                                  DatabaseCredentials.Username +
                                  DatabaseCredentials.Password,
             options => options.UseAdminDatabase(DatabaseCredentials.AdminDatabase));
-
-        // optionsBuilder.UseNpgsql($"Host=localhost;Port=5432;Database=cleanup;Username={DatabaseCredentials.PostgresqlUsername};Password={DatabaseCredentials.PostgresqlPassword}",
-            // options => options.UseAdminDatabase("cleanup"));
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -42,8 +38,8 @@ public class DatabaseContext : IdentityDbContext<ApplicationUser, IdentityRole, 
         modelBuilder.Entity<IdentityRole>().HasData(GenerateIdentityRole("User"));
         modelBuilder.Entity<IdentityRole>().HasData(GenerateIdentityRole("Admin"));
         base.OnModelCreating(modelBuilder);
-        
     }
+    
     private static IdentityRole GenerateIdentityRole(string name)
     {
         return new IdentityRole(name) {NormalizedName = name.ToUpperInvariant()};
