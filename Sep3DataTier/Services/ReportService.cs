@@ -1,18 +1,51 @@
+using System.Text;
+using Google.Protobuf;
 using Model;
 using Grpc.Core;
-using TempData;
+using Sep3DataTier.Database;
+using Sep3DataTier.Repository;
 
 namespace Sep3DataTier.Services;
 
 public class ReportService : Report.ReportBase
 {
-    private readonly FileContext context;
+    private readonly IReportEfcDao reportEfcDao;
 
-    public override Task<ReportList> GetReports(ReportFilter request, ServerCallContext context)
+    public ReportService(IReportEfcDao reportEfcDao)
+    {
+        this.reportEfcDao = reportEfcDao;
+    }
+
+    public override async Task<ReportList> GetReports(ReportFilter request, ServerCallContext context)
     {
         ICollection<ReportObject> data = new List<ReportObject>();
-        
-        return Task.FromResult(new ReportList 
+
+        IEnumerable<Model.Report> reportsFromDatabase = await reportEfcDao.GetAsync();
+
+        foreach (Model.Report report in reportsFromDatabase)
+        {
+            bool proofIsNull = report.Proof == null;
+            ReportObject obj = new ReportObject
+            {
+                Date = new string($"{report.DateOnly.Year}-{report.DateOnly.Month}-{report.DateOnly.Day}"),
+                Description = report.Description,
+                Location = new LocationObject
+                {
+                    Latitude = report.Location.Latitude,
+                    Longitude = report.Location.Longitude,
+                    Size = report.Location.Size
+                },
+                Status = report.Status,
+                Time = new string($"{report.TimeOnly.Hour}:{report.TimeOnly.Minute}:{report.TimeOnly.Second}")
+            };
+            if (proofIsNull)
+                obj.Proof = ByteString.Empty;
+            else
+                obj.Proof = ByteString.CopyFrom(report.Proof);
+            data.Add(obj);
+        }
+
+        return await Task.FromResult(new ReportList
         {
             Reports = { data }
         });
