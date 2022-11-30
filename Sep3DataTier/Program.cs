@@ -24,7 +24,9 @@ builder.WebHost.ConfigureKestrel(options =>
 builder.Services.AddGrpc();
 
 //Efc services
-builder.Services.AddScoped<IUserEfcDao, UserEfcDao>();
+builder.Services.AddScoped<IReportDao, ReportDao>();
+builder.Services.AddScoped<IUserDao, UserDao>();
+
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<DatabaseContext>();
 builder.Services.AddDbContext<DatabaseContext>();
 

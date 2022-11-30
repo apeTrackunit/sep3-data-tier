@@ -7,12 +7,12 @@ namespace Sep3DataTier.Repository;
 
 using Microsoft.EntityFrameworkCore;
 
-public class UserEfcDao : IUserEfcDao
+public class UserDao : IUserDao
 {
     private readonly DatabaseContext context;
     private readonly UserManager<ApplicationUser> userManager;
 
-    public UserEfcDao(DatabaseContext context, UserManager<ApplicationUser> userManager)
+    public UserDao(DatabaseContext context, UserManager<ApplicationUser> userManager)
     {
         this.context = context;
         this.userManager = userManager;

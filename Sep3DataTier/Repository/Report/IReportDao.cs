@@ -2,7 +2,7 @@
 
 namespace Sep3DataTier.Repository;
 
-public interface IReportEfcDao
+public interface IReportDao
 {
     Task<IEnumerable<Model.Report>> GetAsync();
 }

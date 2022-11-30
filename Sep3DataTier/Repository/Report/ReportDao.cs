@@ -4,11 +4,11 @@ using Sep3DataTier.Database;
 
 namespace Sep3DataTier.Repository;
 
-public class ReportEfcDaoImpl : IReportEfcDao
+public class ReportDao : IReportDao
 {
     private readonly DatabaseContext context;
 
-    public ReportEfcDaoImpl(DatabaseContext context)
+    public ReportDao(DatabaseContext context)
     {
         this.context = context;
     }

@@ -9,18 +9,18 @@ namespace Sep3DataTier.Services;
 
 public class ReportService : Report.ReportBase
 {
-    private readonly IReportEfcDao reportEfcDao;
+    private readonly IReportDao reportDao;
 
-    public ReportService(IReportEfcDao reportEfcDao)
+    public ReportService(IReportDao reportDao)
     {
-        this.reportEfcDao = reportEfcDao;
+        this.reportDao = reportDao;
     }
 
     public override async Task<ReportList> GetReports(ReportFilter request, ServerCallContext context)
     {
         ICollection<ReportObject> data = new List<ReportObject>();
 
-        IEnumerable<Model.Report> reportsFromDatabase = await reportEfcDao.GetAsync();
+        IEnumerable<Model.Report> reportsFromDatabase = await reportDao.GetAsync();
 
         foreach (Model.Report report in reportsFromDatabase)
         {

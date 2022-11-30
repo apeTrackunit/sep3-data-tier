@@ -3,7 +3,7 @@ using Model;
 
 namespace Sep3DataTier.Repository;
 
-public interface IUserEfcDao
+public interface IUserDao
 {
     Task<ApplicationUser> RegisterUserAsync(ApplicationUser user, string password);
     Task<String?> GetUserRoleAsync(ApplicationUser user);
