@@ -40,6 +40,11 @@ public class ReportService : Report.ReportBase
                     Longitude = report.Location.Longitude,
                     Size = report.Location.Size
                 },
+                User = new UserObject
+                {
+                    Id = report.User.Id,
+                    Username = report.User.UserName
+                },
                 Status = report.Status,
                 Time = new string($"{report.TimeOnly.Hour}:{report.TimeOnly.Minute}:{report.TimeOnly.Second}")
             };
@@ -62,7 +67,8 @@ public class ReportService : Report.ReportBase
         {
             Latitude = request.Location.Latitude,
             Longitude = request.Location.Longitude,
-            Size = BitConverter.GetBytes(request.Location.Size)[1]
+            // Size = BitConverter.GetBytes(request.Location.Size)[1]
+            Size = (byte)request.Location.Size
         });
 
         ApplicationUser? user = await userDao.GetUserByIdAsync(request.CreatorId);

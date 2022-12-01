@@ -16,7 +16,10 @@ public class ReportDao : IReportDao
 
     public async Task<IEnumerable<Model.Report>> GetAsync()
     {
-        IQueryable<Model.Report> reportsQuery = context.Reports.Include(report => report.Location).AsQueryable();
+        IQueryable<Model.Report> reportsQuery = context.Reports
+            .Include(report => report.User)
+            .Include(report => report.Location).AsQueryable();
+            
 
         IEnumerable<Model.Report> result = await reportsQuery.ToListAsync();
         return result;
