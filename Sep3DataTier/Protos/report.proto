@@ -12,12 +12,20 @@ message ReportList {
 }
 
 message ReportObject {
-  string date = 1;
-  string time = 2;
-  bytes proof = 3;
-  string description = 4;
-  string status = 5;
-  LocationObject location = 6;
+  string id = 1;
+  string date = 2;
+  string time = 3;
+  bytes proof = 4;
+  string description = 5;
+  string status = 6;
+  LocationObject location = 7;
+  UserObject user = 8;
+}
+
+message UserObject
+{
+  string id = 1;
+  string username = 2;
 }
 
 message LocationObject {
@@ -26,6 +34,18 @@ message LocationObject {
   int32 size = 3;
 }
 
+message CreateReportObject
+{
+  string date = 1;
+  string time = 2;
+  bytes proof = 3;
+  string description = 4;
+  string status = 5;
+  LocationObject location = 6;
+  string creatorId= 7;
+}
+
 service Report {
   rpc GetReports(ReportFilter) returns (ReportList);
+  rpc CreateReport(CreateReportObject) returns (ReportObject);
 }

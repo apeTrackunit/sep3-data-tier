@@ -1,11 +1,12 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Model;
 
 public class Report
 {
     [Key]
-    public int Id { get; set; }
+    public Guid Id { get; set; }
     [DataType(DataType.Date)]
     public DateOnly DateOnly { get; set; }
     [DataType(DataType.Time)]
@@ -17,6 +18,7 @@ public class Report
     public string Status { get; set; }
     
     public Location Location { get; set; }
+    public ApplicationUser User { get; set; }
 
     public Report()
     {

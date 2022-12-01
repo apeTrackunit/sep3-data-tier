@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Model;
 using Sep3DataTier.Database;
 
@@ -19,5 +20,12 @@ public class ReportDao : IReportDao
 
         IEnumerable<Model.Report> result = await reportsQuery.ToListAsync();
         return result;
+    }
+
+    public async Task<Model.Report> CreateAsync(Model.Report report)
+    {
+        EntityEntry<Model.Report> result = await context.Reports.AddAsync(report);
+        await context.SaveChangesAsync();
+        return result.Entity;
     }
 }
