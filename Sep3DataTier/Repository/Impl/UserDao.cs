@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.Runtime.InteropServices;
+using Microsoft.AspNetCore.Identity;
 using Model;
 using NuGet.Protocol;
 using Sep3DataTier.Database;
@@ -40,14 +41,15 @@ public class UserDao : IUserDao
     public async Task<bool> LoginUser(ApplicationUser user, string requestPassword)
     {
         var result = await userManager.CheckPasswordAsync(user, requestPassword);
-        
+
         if (!result)
         {
             throw new Exception("Incorrect credentials");
         }
+
         return true;
     }
-    
+
     public async Task<ApplicationUser> GetUserByEmailAsync(string email)
     {
         try
@@ -66,7 +68,7 @@ public class UserDao : IUserDao
             throw new Exception(ex.Message);
         }
     }
-    
+
     public async Task<String?> GetUserRoleAsync(ApplicationUser user)
     {
         try
@@ -81,4 +83,23 @@ public class UserDao : IUserDao
             throw new Exception(e.Message);
         }
     }
+
+    public async Task<ApplicationUser> GetUserByIdAsync(String id)
+    {
+        try
+        {
+            var result = await userManager.FindByIdAsync(id);
+
+            if (result == null)
+                throw new Exception("User was not found");
+
+            return result;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw new Exception(e.Message);
+        }
+    }
+
 }

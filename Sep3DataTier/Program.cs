@@ -7,6 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Model;
 using Sep3DataTier.Database;
 using Sep3DataTier.Repository;
+using Sep3DataTier.Repository.Impl;
+using Sep3DataTier.Repository.Intf;
 using Sep3DataTier.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,6 +28,7 @@ builder.Services.AddGrpc();
 //Efc services
 builder.Services.AddScoped<IReportDao, ReportDao>();
 builder.Services.AddScoped<IUserDao, UserDao>();
+builder.Services.AddScoped<ILocationDao, LocationDao>();
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<DatabaseContext>();
 builder.Services.AddDbContext<DatabaseContext>();

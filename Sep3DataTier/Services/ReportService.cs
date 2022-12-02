@@ -4,16 +4,21 @@ using Model;
 using Grpc.Core;
 using Sep3DataTier.Database;
 using Sep3DataTier.Repository;
+using Sep3DataTier.Repository.Intf;
 
 namespace Sep3DataTier.Services;
 
 public class ReportService : Report.ReportBase
 {
     private readonly IReportDao reportDao;
+    private readonly ILocationDao locationDao;
+    private readonly IUserDao userDao;
 
-    public ReportService(IReportDao reportDao)
+    public ReportService(IReportDao reportDao, ILocationDao locationDao, IUserDao userDao)
     {
         this.reportDao = reportDao;
+        this.locationDao = locationDao;
+        this.userDao = userDao;
     }
 
     public override async Task<ReportList> GetReports(ReportFilter request, ServerCallContext context)
@@ -35,6 +40,11 @@ public class ReportService : Report.ReportBase
                     Longitude = report.Location.Longitude,
                     Size = report.Location.Size
                 },
+                User = new UserObject
+                {
+                    Id = report.User.Id,
+                    Username = report.User.UserName
+                },
                 Status = report.Status,
                 Time = new string($"{report.TimeOnly.Hour}:{report.TimeOnly.Minute}:{report.TimeOnly.Second}")
             };
@@ -50,4 +60,49 @@ public class ReportService : Report.ReportBase
             Reports = { data }
         });
     }
+
+    public override async Task<ReportObject> CreateReport(CreateReportObject request, ServerCallContext context)
+    {
+        Location location = await locationDao.CreateLocationAsync(new Location
+        {
+            Latitude = request.Location.Latitude,
+            Longitude = request.Location.Longitude,
+            Size = (byte)request.Location.Size
+        });
+
+        ApplicationUser? user = await userDao.GetUserByIdAsync(request.CreatorId);
+        Model.Report report = new Model.Report
+        {
+            DateOnly = DateOnly.Parse(request.Date),
+            TimeOnly = TimeOnly.Parse(request.Time),
+            Proof = request.Proof.ToByteArray(),
+            Description = request.Description,
+            Status = request.Status,
+            Location = location,
+            User = user
+        };
+        Model.Report result = await reportDao.CreateAsync(report);
+        return await Task.FromResult(new ReportObject
+        {
+            Id = result.Id.ToString(),
+            Date = result.DateOnly.ToString("dd/MM/yyyy"),
+            Time = result.TimeOnly.ToString("HH:mm"),
+            Proof = ByteString.CopyFrom(result.Proof),
+            Description = result.Description,
+            Status = result.Status,
+            Location = new LocationObject
+            {
+                Latitude = result.Location.Latitude,
+                Longitude = result.Location.Latitude,
+                Size = result.Location.Size
+            },
+            User = new UserObject
+            {
+                Id = result.User.Id,
+                Username = result.User.UserName
+            }
+        });
+    }
+
+ 
 }
