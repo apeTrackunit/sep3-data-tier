@@ -67,7 +67,6 @@ public class ReportService : Report.ReportBase
         {
             Latitude = request.Location.Latitude,
             Longitude = request.Location.Longitude,
-            // Size = BitConverter.GetBytes(request.Location.Size)[1]
             Size = (byte)request.Location.Size
         });
 
