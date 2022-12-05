@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 using Google.Protobuf;
 using Model;
@@ -63,22 +64,20 @@ public class ReportService : Report.ReportBase
 
     public override async Task<ReportObject> CreateReport(CreateReportObject request, ServerCallContext context)
     {
-        Location location = await locationDao.CreateLocationAsync(new Location
-        {
-            Latitude = request.Location.Latitude,
-            Longitude = request.Location.Longitude,
-            Size = (byte)request.Location.Size
-        });
-
-        ApplicationUser? user = await userDao.GetUserByIdAsync(request.CreatorId);
+        ApplicationUser? user = await userDao.GetUserByEmailAsync(request.CreatorEmail);
         Model.Report report = new Model.Report
         {
-            DateOnly = DateOnly.Parse(request.Date),
+            DateOnly = DateOnly.ParseExact(request.Date, "yyyy/MM/dd", CultureInfo.InvariantCulture),
             TimeOnly = TimeOnly.Parse(request.Time),
             Proof = request.Proof.ToByteArray(),
             Description = request.Description,
             Status = request.Status,
-            Location = location,
+            Location = new Location()
+            {
+                Latitude = request.Location.Latitude,
+                Longitude = request.Location.Longitude,
+                Size = (byte)request.Location.Size
+            },
             User = user
         };
         Model.Report result = await reportDao.CreateAsync(report);
@@ -103,6 +102,4 @@ public class ReportService : Report.ReportBase
             }
         });
     }
-
- 
 }
