@@ -102,4 +102,14 @@ public class ReportService : Report.ReportBase
             }
         });
     }
+
+    public override async Task<ReviewedReport> ReviewReport(ToReviewReport request, ServerCallContext context)
+    {
+        string confirmation = await reportDao.UpdateReviewAsync(request.ReportId, request.UpdatedStatus);
+
+        return await Task.FromResult(new ReviewedReport
+        {
+            Confirmation = confirmation
+        });
+    }
 }

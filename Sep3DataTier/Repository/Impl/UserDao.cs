@@ -24,6 +24,7 @@ public class UserDao : IUserDao
         try
         {
             var result = await userManager.CreateAsync(user, password);
+            
             if (result.Succeeded)
             {
                 await userManager.AddToRoleAsync(user, "User");
@@ -56,6 +57,8 @@ public class UserDao : IUserDao
         {
             var user = await context.Users.Where(user => user.Email == email).FirstOrDefaultAsync();
 
+            //For some reason we don't have a working email normalization, therefore it is not possible to user usermanager to find by email.
+            // var user = await userManager.FindByEmailAsync(email);
             if (user == null)
             {
                 throw new Exception("User not found");

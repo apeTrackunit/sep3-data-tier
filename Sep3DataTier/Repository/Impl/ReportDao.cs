@@ -31,4 +31,18 @@ public class ReportDao : IReportDao
         await context.SaveChangesAsync();
         return result.Entity;
     }
+
+    public async Task<string> UpdateReviewAsync(string reportId, string status)
+    {
+        var foundReport = context.Reports.FirstOrDefaultAsync(rep => rep.Id.Equals(Guid.Parse(reportId))).Result;
+
+        if (foundReport == null)
+        {
+            return await Task.FromResult("Report not found. Status could not be updated!");
+        }
+        foundReport.Status = status;
+        await context.SaveChangesAsync();
+        
+        return await Task.FromResult("Status updated successfully");
+    }
 }
