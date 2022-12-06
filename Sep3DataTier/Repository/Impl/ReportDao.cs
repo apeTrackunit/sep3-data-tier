@@ -44,4 +44,15 @@ public class ReportDao : IReportDao
         
         return await Task.FromResult("Status updated successfully");
     }
+
+    public async Task<Model.Report> GetReportByIdAsync(string reportId)
+    {
+        
+        var foundReport =context.Reports.Where(report => report.Id.Equals(Guid.Parse(reportId))).Include(report => report.User)
+            .Include(report => report.Location).FirstOrDefault();
+        if (foundReport == null)
+            throw new Exception($"Report with {reportId} could not be found!");
+
+        return await Task.FromResult(foundReport);
+    }
 }
