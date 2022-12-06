@@ -4,10 +4,27 @@ option csharp_namespace = "Sep3DataTier";
 option java_multiple_files = true;
 option java_package = "via.sep3.logic.protobuf.report";
 
-message ReportFilter {
+service Report 
+{
+  rpc GetReports(ReportsFilter) returns (ReportList);
+  rpc CreateReport(CreateReportObject) returns (ReportObject);
+  rpc ReviewReport(ToReviewReport) returns (ReviewedReport);
+  rpc GetReportById(ReportId) returns (ReportObject);
 }
 
-message ReportList {
+message ReportsFilter 
+{
+  string email = 1;
+  bool approved = 2;
+}
+
+message ReportId
+{
+  string id = 1;
+}
+
+message ReportList 
+{
   repeated ReportObject reports = 1;
 }
 
@@ -42,7 +59,7 @@ message CreateReportObject
   string description = 4;
   string status = 5;
   LocationObject location = 6;
-  string creatorEmail= 7;
+  string creatorEmail = 7;
 }
 
 message ToReviewReport
@@ -56,8 +73,3 @@ message ReviewedReport
   string confirmation = 1;
 }
 
-service Report {
-  rpc GetReports(ReportFilter) returns (ReportList);
-  rpc CreateReport(CreateReportObject) returns (ReportObject);
-  rpc ReviewReport(ToReviewReport) returns (ReviewedReport);
-}

@@ -14,13 +14,12 @@ public class ReportDao : IReportDao
         this.context = context;
     }
 
-    public async Task<IEnumerable<Model.Report>> GetAsync()
+    public async Task<IEnumerable<Model.Report>> GetAsync(string email, bool approved)
     {
         IQueryable<Model.Report> reportsQuery = context.Reports
             .Include(report => report.User)
             .Include(report => report.Location).AsQueryable();
-            
-
+        
         IEnumerable<Model.Report> result = await reportsQuery.ToListAsync();
         return result;
     }
@@ -44,5 +43,16 @@ public class ReportDao : IReportDao
         await context.SaveChangesAsync();
         
         return await Task.FromResult("Status updated successfully");
+    }
+
+    public async Task<Model.Report> GetReportByIdAsync(string reportId)
+    {
+        
+        var foundReport =context.Reports.Where(report => report.Id.Equals(Guid.Parse(reportId))).Include(report => report.User)
+            .Include(report => report.Location).FirstOrDefault();
+        if (foundReport == null)
+            throw new Exception($"Report with {reportId} could not be found!");
+
+        return await Task.FromResult(foundReport);
     }
 }

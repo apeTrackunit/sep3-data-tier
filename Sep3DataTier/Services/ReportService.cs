@@ -4,6 +4,7 @@ using Google.Protobuf;
 using Model;
 using Grpc.Core;
 using Sep3DataTier.Database;
+using Sep3DataTier.Migrations;
 using Sep3DataTier.Repository;
 using Sep3DataTier.Repository.Intf;
 
@@ -22,11 +23,11 @@ public class ReportService : Report.ReportBase
         this.userDao = userDao;
     }
 
-    public override async Task<ReportList> GetReports(ReportFilter request, ServerCallContext context)
+    public override async Task<ReportList> GetReports(ReportsFilter request, ServerCallContext context)
     {
         ICollection<ReportObject> data = new List<ReportObject>();
 
-        IEnumerable<Model.Report> reportsFromDatabase = await reportDao.GetAsync();
+        IEnumerable<Model.Report> reportsFromDatabase = await reportDao.GetAsync(request.Email, request.Approved);
 
         foreach (Model.Report report in reportsFromDatabase)
         {
@@ -111,6 +112,31 @@ public class ReportService : Report.ReportBase
         return await Task.FromResult(new ReviewedReport
         {
             Confirmation = confirmation
+        });
+    }
+
+    public override async Task<ReportObject> GetReportById(ReportId request, ServerCallContext context)
+    {
+        Model.Report report = await reportDao.GetReportByIdAsync(request.Id);
+        return await Task.FromResult(new ReportObject
+        {
+            Id = report.Id.ToString(),
+            Date = report.DateOnly.ToString("yyyy-MM-dd"),
+            Time = new string($"{report.TimeOnly.Hour:00}:{report.TimeOnly.Minute:00}:{report.TimeOnly.Second:00}"),
+            Proof = ByteString.CopyFrom(report.Proof),
+            Description = report.Description,
+            Status = report.Status,
+            Location = new LocationObject
+            {
+                Latitude = report.Location.Latitude,
+                Longitude = report.Location.Longitude,
+                Size = report.Location.Size
+            },
+            User = new UserObject
+            {
+                Id = report.User.Id,
+                Username = report.User.UserName
+            }
         });
     }
 }
