@@ -1,4 +1,6 @@
-﻿namespace Sep3DataTier.Services;
+﻿using Google.Protobuf;
+
+namespace Sep3DataTier.Services;
 
 using System.Globalization;
 using Grpc.Core;
@@ -26,7 +28,7 @@ public class EventService : Sep3DataTier.Event.EventBase
     {
         ApplicationUser? user = await userDao.GetUserByEmailAsync(request.CreatorEmail);
         Report? report = await reportDao.GetReportByIdAsync(request.ReportId);
-
+        
         Event cleaningEvent = new Event()
         {
             DateOnly = DateOnly.ParseExact(request.Date, "yyyy/MM/dd", CultureInfo.InvariantCulture),
@@ -37,9 +39,36 @@ public class EventService : Sep3DataTier.Event.EventBase
             Organiser = user,
             Report = report
         };
-
+        
         Event result = await eventDao.CreateEventAsync(cleaningEvent);
 
-        return null;
+        EventObject reply = new EventObject()
+        {
+            Id = result.Id.ToString(),
+            Date = report.DateOnly.ToString("yyyy-MM-dd"),
+            Time = new string($"{report.TimeOnly.Hour:00}:{report.TimeOnly.Minute:00}:{report.TimeOnly.Second:00}"),
+            Description = result.Description,
+            Status = result.Status,
+            //The validation is always empty upon creation of event
+            Validation = ByteString.Empty,
+            Organiser = new EventUserObject
+            {
+                Id = result.Organiser.Id,
+                Username = result.Organiser.UserName
+            },
+            Report = new ReportEventObject
+            {
+                Description = result.Report.Description,
+                Proof = ByteString.CopyFrom(result.Report.Proof),
+                Location = new LocationEventObject
+                {
+                    Latitude = result.Report.Location.Latitude,
+                    Longitude = result.Report.Location.Longitude,
+                    Size = result.Report.Location.Size,
+                }
+            }
+        };
+        
+        return reply;
     }
 }

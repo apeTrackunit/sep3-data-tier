@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Model;
 using Sep3DataTier.Repository;
 
 namespace Sep3DataTier.Database;
 
-public class DatabaseContext : DbContext
+public class DatabaseContext : IdentityDbContext<ApplicationUser, IdentityRole, string>
 {
     public DbSet<Location> Locations { get; set; }
     public DbSet<Model.Report> Reports { get; set; }
