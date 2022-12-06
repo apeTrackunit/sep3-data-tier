@@ -85,8 +85,8 @@ public class ReportService : Report.ReportBase
         return await Task.FromResult(new ReportObject
         {
             Id = result.Id.ToString(),
-            Date = result.DateOnly.ToString("yyyy/MM/dd"),
-            Time = result.TimeOnly.ToString("HH:mm:ss"),
+            Date = result.DateOnly.ToString("yyyy-MM-dd"),
+            Time = new string($"{report.TimeOnly.Hour:00}:{report.TimeOnly.Minute:00}:{report.TimeOnly.Second:00}"),
             Proof = ByteString.CopyFrom(result.Proof),
             Description = result.Description,
             Status = result.Status,
