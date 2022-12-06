@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 using Model;
 using Sep3DataTier.Database;
 
@@ -16,11 +17,44 @@ public class ReportDao : IReportDao
 
     public async Task<IEnumerable<Model.Report>> GetAsync(string email, bool approved)
     {
-        IQueryable<Model.Report> reportsQuery = context.Reports
-            .Include(report => report.User)
-            .Include(report => report.Location).AsQueryable();
-        
-        IEnumerable<Model.Report> result = await reportsQuery.ToListAsync();
+        IQueryable<Model.Report>? reportsQuery = null;
+        if (approved)
+        {
+            reportsQuery = context.Reports
+                .Where(report => report.Status.Equals("Approved"))
+                .Include(report => report.User)
+                .Include(report => report.Location)
+                .Select(r => new Model.Report
+                {
+                    Id = r.Id,
+                    DateOnly = r.DateOnly,
+                    TimeOnly = r.TimeOnly,
+                    Description = r.Description,
+                    User = r.User,
+                    Status = r.Status,
+                    Location = r.Location
+                })
+                .AsQueryable();
+        }
+        else
+        {
+            reportsQuery = context.Reports
+                .Where(report => report.User.Email.Equals(email))
+                .Include(report => report.User)
+                .Include(report => report.Location)
+                .Select(r => new Model.Report
+                {
+                    Id = r.Id,
+                    DateOnly = r.DateOnly,
+                    TimeOnly = r.TimeOnly,
+                    Description = r.Description,
+                    User = r.User,
+                    Status = r.Status,
+                    Location = r.Location
+                })
+                .AsQueryable();
+        }
+        IEnumerable<Model.Report> result = await reportsQuery!.ToListAsync();
         return result;
     }
 
@@ -39,9 +73,10 @@ public class ReportDao : IReportDao
         {
             return await Task.FromResult("Report not found. Status could not be updated!");
         }
+
         foundReport.Status = status;
         await context.SaveChangesAsync();
-        
+
         return await Task.FromResult("Status updated successfully");
     }
 }

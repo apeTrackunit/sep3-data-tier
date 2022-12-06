@@ -22,7 +22,7 @@ public class ReportService : Report.ReportBase
         this.userDao = userDao;
     }
 
-    public override async Task<ReportList> GetReports(ReportFilter request, ServerCallContext context)
+    public override async Task<ReportsList> GetReports(ReportsFilter request, ServerCallContext context)
     {
         ICollection<ReportObject> data = new List<ReportObject>();
 
@@ -50,14 +50,12 @@ public class ReportService : Report.ReportBase
                 Status = report.Status,
                 Time = new string($"{report.TimeOnly.Hour:00}:{report.TimeOnly.Minute:00}:{report.TimeOnly.Second:00}")
             };
-            if (proofIsNull)
-                obj.Proof = ByteString.Empty;
-            else
+            if (!proofIsNull)
                 obj.Proof = ByteString.CopyFrom(report.Proof);
             data.Add(obj);
         }
 
-        return await Task.FromResult(new ReportList
+        return await Task.FromResult(new ReportsList
         {
             Reports = { data }
         });
