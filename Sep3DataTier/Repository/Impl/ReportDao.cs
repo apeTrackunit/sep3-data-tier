@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 using Model;
@@ -55,6 +55,7 @@ public class ReportDao : IReportDao
                 .AsQueryable();
         }
         IEnumerable<Model.Report> result = await reportsQuery!.ToListAsync();
+
         return result;
     }
 
@@ -78,5 +79,16 @@ public class ReportDao : IReportDao
         await context.SaveChangesAsync();
 
         return await Task.FromResult("Status updated successfully");
+    }
+
+    public async Task<Model.Report> GetReportByIdAsync(string reportId)
+    {
+        
+        var foundReport =context.Reports.Where(report => report.Id.Equals(Guid.Parse(reportId))).Include(report => report.User)
+            .Include(report => report.Location).FirstOrDefault();
+        if (foundReport == null)
+            throw new Exception($"Report with {reportId} could not be found!");
+
+        return await Task.FromResult(foundReport);
     }
 }
