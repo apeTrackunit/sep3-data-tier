@@ -33,7 +33,8 @@ public class ReportService : Report.ReportBase
             bool proofIsNull = report.Proof == null;
             ReportObject obj = new ReportObject
             {
-                Date = new string($"{report.DateOnly.Year}-{report.DateOnly.Month}-{report.DateOnly.Day}"),
+                Id = report.Id.ToString(),
+                Date = new string($"{report.DateOnly.Year:0000}-{report.DateOnly.Month:00}-{report.DateOnly.Day:00}"),
                 Description = report.Description,
                 Location = new LocationObject
                 {
@@ -47,7 +48,7 @@ public class ReportService : Report.ReportBase
                     Username = report.User.UserName
                 },
                 Status = report.Status,
-                Time = new string($"{report.TimeOnly.Hour}:{report.TimeOnly.Minute}:{report.TimeOnly.Second}")
+                Time = new string($"{report.TimeOnly.Hour:00}:{report.TimeOnly.Minute:00}:{report.TimeOnly.Second:00}")
             };
             if (proofIsNull)
                 obj.Proof = ByteString.Empty;
@@ -84,8 +85,8 @@ public class ReportService : Report.ReportBase
         return await Task.FromResult(new ReportObject
         {
             Id = result.Id.ToString(),
-            Date = result.DateOnly.ToString("dd/MM/yyyy"),
-            Time = result.TimeOnly.ToString("HH:mm"),
+            Date = result.DateOnly.ToString("yyyy/MM/dd"),
+            Time = result.TimeOnly.ToString("HH:mm:ss"),
             Proof = ByteString.CopyFrom(result.Proof),
             Description = result.Description,
             Status = result.Status,
