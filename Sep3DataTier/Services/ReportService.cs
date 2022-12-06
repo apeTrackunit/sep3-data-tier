@@ -24,14 +24,13 @@ public class ReportService : Report.ReportBase
 
     public override async Task<ReportList> GetReports(ReportFilter request, ServerCallContext context)
     {
-        ICollection<ReportObject> data = new List<ReportObject>();
+        ICollection<ReportObjectWithoutProof> data = new List<ReportObjectWithoutProof>();
 
         IEnumerable<Model.Report> reportsFromDatabase = await reportDao.GetAsync();
 
         foreach (Model.Report report in reportsFromDatabase)
         {
-            bool proofIsNull = report.Proof == null;
-            ReportObject obj = new ReportObject
+            ReportObjectWithoutProof obj = new ReportObjectWithoutProof
             {
                 Id = report.Id.ToString(),
                 Date = new string($"{report.DateOnly.Year:0000}-{report.DateOnly.Month:00}-{report.DateOnly.Day:00}"),
@@ -50,10 +49,6 @@ public class ReportService : Report.ReportBase
                 Status = report.Status,
                 Time = new string($"{report.TimeOnly.Hour:00}:{report.TimeOnly.Minute:00}:{report.TimeOnly.Second:00}")
             };
-            if (proofIsNull)
-                obj.Proof = ByteString.Empty;
-            else
-                obj.Proof = ByteString.CopyFrom(report.Proof);
             data.Add(obj);
         }
 
@@ -111,6 +106,30 @@ public class ReportService : Report.ReportBase
         return await Task.FromResult(new ReviewedReport
         {
             Confirmation = confirmation
+        });
+    }
+
+    public override async Task<ReportObject> GetReportById(ReportObjectId request, ServerCallContext context)
+    {
+        var result = await reportDao.GetByIdAsync(request.ReportId);
+        return await Task.FromResult(new ReportObject
+        {
+            Date = result.DateOnly.ToString("yyyy/MM/dd"),
+            Time = result.TimeOnly.ToString("HH:mm:ss"),
+            Proof = ByteString.CopyFrom(result.Proof),
+            Description = result.Description,
+            Status = result.Status,
+            Location = new LocationObject
+            {
+                Latitude = result.Location.Latitude,
+                Longitude = result.Location.Latitude,
+                Size = result.Location.Size
+            },
+            User = new UserObject
+            {
+                Id = result.User.Id,
+                Username = result.User.UserName
+            }
         });
     }
 }

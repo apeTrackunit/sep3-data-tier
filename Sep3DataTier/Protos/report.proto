@@ -8,7 +8,18 @@ message ReportFilter {
 }
 
 message ReportList {
-  repeated ReportObject reports = 1;
+  repeated ReportObjectWithoutProof reports = 1;
+}
+
+message ReportObjectWithoutProof
+{
+  string id = 1;
+  string date = 2;
+  string time = 3;
+  string description = 5;
+  string status = 6;
+  LocationObject location = 7;
+  UserObject user = 8;
 }
 
 message ReportObject {
@@ -20,6 +31,11 @@ message ReportObject {
   string status = 6;
   LocationObject location = 7;
   UserObject user = 8;
+}
+
+message ReportObjectId
+{
+  string reportId = 1;
 }
 
 message UserObject
@@ -60,4 +76,5 @@ service Report {
   rpc GetReports(ReportFilter) returns (ReportList);
   rpc CreateReport(CreateReportObject) returns (ReportObject);
   rpc ReviewReport(ToReviewReport) returns (ReviewedReport);
+  rpc GetReportById(ReportObjectId) returns(ReportObject);
 }

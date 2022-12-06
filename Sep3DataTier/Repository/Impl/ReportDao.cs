@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Model;
 using Sep3DataTier.Database;
+using Sep3DataTier.Migrations;
 
 namespace Sep3DataTier.Repository;
 
@@ -34,7 +35,9 @@ public class ReportDao : IReportDao
 
     public async Task<string> UpdateReviewAsync(string reportId, string status)
     {
-        var foundReport = context.Reports.FirstOrDefaultAsync(rep => rep.Id.Equals(Guid.Parse(reportId))).Result;
+
+        
+        var foundReport = context.Reports.Include(rep => rep.User).Include(rep => rep.Location).FirstOrDefaultAsync(rep => rep.Id.Equals(Guid.Parse(reportId))).Result;
 
         if (foundReport == null)
         {
@@ -44,5 +47,18 @@ public class ReportDao : IReportDao
         await context.SaveChangesAsync();
         
         return await Task.FromResult("Status updated successfully");
+    }
+
+    public async Task<Model.Report> GetByIdAsync(string reportId)
+    {
+        // for some reason this did not work, but the other one works :^)
+        // var foundReport = context.Reports.FirstOrDefault(rep => rep.Id.Equals(Guid.Parse(reportId)));
+        
+        var foundReport =context.Reports.Where(report => report.Id.Equals(Guid.Parse(reportId))).Include(report => report.User)
+            .Include(report => report.Location).FirstOrDefault();
+        if (foundReport == null)
+            throw new Exception($"Report with {reportId} could not be found!");
+
+        return await Task.FromResult(foundReport);
     }
 }
