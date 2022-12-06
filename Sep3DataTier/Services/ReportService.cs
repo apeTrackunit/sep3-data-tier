@@ -23,7 +23,7 @@ public class ReportService : Report.ReportBase
         this.userDao = userDao;
     }
 
-    public override async Task<ReportList> GetReports(ReportFilter request, ServerCallContext context)
+    public override async Task<ReportList> GetReports(ReportsFilter request, ServerCallContext context)
     {
         ICollection<ReportObject> data = new List<ReportObject>();
 
