@@ -26,7 +26,7 @@ public class ReportService : Report.ReportBase
     {
         ICollection<ReportObject> data = new List<ReportObject>();
 
-        IEnumerable<Model.Report> reportsFromDatabase = await reportDao.GetAsync();
+        IEnumerable<Model.Report> reportsFromDatabase = await reportDao.GetAsync(request.Email, request.Approved);
 
         foreach (Model.Report report in reportsFromDatabase)
         {

@@ -14,13 +14,12 @@ public class ReportDao : IReportDao
         this.context = context;
     }
 
-    public async Task<IEnumerable<Model.Report>> GetAsync()
+    public async Task<IEnumerable<Model.Report>> GetAsync(string email, bool approved)
     {
         IQueryable<Model.Report> reportsQuery = context.Reports
             .Include(report => report.User)
             .Include(report => report.Location).AsQueryable();
-            
-
+        
         IEnumerable<Model.Report> result = await reportsQuery.ToListAsync();
         return result;
     }
