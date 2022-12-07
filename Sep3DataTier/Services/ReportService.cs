@@ -56,7 +56,7 @@ public class ReportService : Report.ReportBase
             data.Add(obj);
         }
 
-        return await Task.FromResult(new ReportsList
+        return await Task.FromResult(new ReportList
         {
             Reports = { data }
         });
