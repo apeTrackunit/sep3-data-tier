@@ -25,7 +25,7 @@ public class EventDao:IEventDao
 
     public async Task<List<Event>> GetEventsAsync()
     {
-        List<Event> events = await context.Events.Include(ev => ev.Organiser).Include(ev => ev.Report)
+        List<Event> events = await context.Events.Where(ev => ev.Status.Equals("Upcoming")).Include(ev => ev.Organiser).Include(ev => ev.Report)
             .Include(ev => ev.Report.Location).ToListAsync();
         return events;
     }

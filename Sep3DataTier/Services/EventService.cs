@@ -96,7 +96,6 @@ public class EventService : Sep3DataTier.Event.EventBase
                 },
                 Report = new ReportEventObject
                 {
-                    Proof = ByteString.CopyFrom(eventObj.Report.Proof),
                     Description = eventObj.Report.Description,
                     Location = new LocationEventObject
                     {

@@ -37,7 +37,7 @@ message EventUserObject
 
 message ReportEventObject
 {
-  bytes proof = 1;
+  optional bytes proof = 1;
   string description = 2;
   LocationEventObject location = 3;
 }
