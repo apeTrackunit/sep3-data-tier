@@ -32,7 +32,7 @@ message ReportObject {
   string id = 1;
   string date = 2;
   string time = 3;
-  bytes proof = 4;
+  optional bytes proof = 4;
   string description = 5;
   string status = 6;
   LocationObject location = 7;
@@ -72,4 +72,3 @@ message ReviewedReport
 {
   string confirmation = 1;
 }
-
