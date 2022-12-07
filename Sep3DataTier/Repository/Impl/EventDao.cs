@@ -1,4 +1,6 @@
-﻿namespace Sep3DataTier.Repository.Impl;
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace Sep3DataTier.Repository.Impl;
 
 using Database;
 using Intf;
@@ -19,5 +21,12 @@ public class EventDao:IEventDao
         EntityEntry<Model.Event> result = await context.Events.AddAsync(cleaningEvent);
         await context.SaveChangesAsync();
         return result.Entity;
+    }
+
+    public async Task<List<Event>> GetEventsAsync()
+    {
+        List<Event> events = await context.Events.Include(ev => ev.Organiser).Include(ev => ev.Report)
+            .Include(ev => ev.Report.Location).ToListAsync();
+        return events;
     }
 }
