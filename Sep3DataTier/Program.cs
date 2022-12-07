@@ -29,6 +29,7 @@ builder.Services.AddGrpc();
 builder.Services.AddScoped<IReportDao, ReportDao>();
 builder.Services.AddScoped<IUserDao, UserDao>();
 builder.Services.AddScoped<ILocationDao, LocationDao>();
+builder.Services.AddScoped<IEventDao, EventDao>();
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<DatabaseContext>();
 builder.Services.AddDbContext<DatabaseContext>();
@@ -39,6 +40,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 app.MapGrpcService<ReportService>();
 app.MapGrpcService<AuthService>();
+app.MapGrpcService<EventService>();
 app.UseAuthentication();
 app.Run();
 

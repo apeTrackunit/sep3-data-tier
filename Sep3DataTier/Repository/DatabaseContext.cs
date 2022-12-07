@@ -10,9 +10,11 @@ public class DatabaseContext : IdentityDbContext<ApplicationUser, IdentityRole, 
 {
     public DbSet<Location> Locations { get; set; }
     public DbSet<Model.Report> Reports { get; set; }
-    
+
     public DbSet<ApplicationUser> Users { get; set; }
     
+    public DbSet<Model.Event> Events { get; set; }
+
     public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)
     {
         
@@ -35,6 +37,7 @@ public class DatabaseContext : IdentityDbContext<ApplicationUser, IdentityRole, 
         modelBuilder.Entity<Model.Report>().HasKey(report => report.Id);
         modelBuilder.Entity<ApplicationUser>().HasKey(user => user.Id);
         modelBuilder.Entity<ApplicationUser>().HasIndex(user => user.Email).IsUnique();
+        modelBuilder.Entity<Model.Event>().HasKey(e => e.Id);
         modelBuilder.Entity<IdentityRole>().HasData(GenerateIdentityRole("User"));
         modelBuilder.Entity<IdentityRole>().HasData(GenerateIdentityRole("Admin"));
         base.OnModelCreating(modelBuilder);
