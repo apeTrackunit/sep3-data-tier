@@ -86,8 +86,7 @@ public class EventService : Sep3DataTier.Event.EventBase
                 Time = new string(
                     $"{eventObj.TimeOnly.Hour:00}:{eventObj.TimeOnly.Minute:00}:{eventObj.TimeOnly.Second:00}"),
                 Description = eventObj.Description,
-                Status = eventObj.Status,
-                Organiser = new EventUserObject
+                Organiser = new UserEventObject()
                 {
                     Id = eventObj.Organiser.Id,
                     Username = eventObj.Organiser.UserName
