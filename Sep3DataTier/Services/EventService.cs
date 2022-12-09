@@ -34,7 +34,6 @@ public class EventService : Sep3DataTier.Event.EventBase
             DateOnly = DateOnly.ParseExact(request.Date, "yyyy/MM/dd", CultureInfo.InvariantCulture),
             TimeOnly = TimeOnly.Parse(request.Time),
             Description = request.Description,
-            Status = request.Status,
             Validation = null,
             Organiser = user,
             Report = report
@@ -48,10 +47,9 @@ public class EventService : Sep3DataTier.Event.EventBase
             Date = report.DateOnly.ToString("yyyy-MM-dd"),
             Time = new string($"{report.TimeOnly.Hour:00}:{report.TimeOnly.Minute:00}:{report.TimeOnly.Second:00}"),
             Description = result.Description,
-            Status = result.Status,
             //The validation is always empty upon creation of event
             Validation = ByteString.Empty,
-            Organiser = new EventUserObject
+            Organiser = new UserEventObject()
             {
                 Id = result.Organiser.Id,
                 Username = result.Organiser.UserName
