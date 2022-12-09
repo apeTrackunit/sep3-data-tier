@@ -69,4 +69,48 @@ public class EventService : Sep3DataTier.Event.EventBase
         
         return reply;
     }
+
+    public override async Task<EventList> GetEvents(EventFilter request, ServerCallContext context)
+    {
+        ICollection<EventObject> events = new List<EventObject>();
+        IEnumerable<Event> eventsInDatabase = await eventDao.GetEventsAsync();
+
+        foreach (Event eventObj in eventsInDatabase)
+        {
+            bool proofIsNull = eventObj.Validation == null;
+            EventObject obj = new EventObject
+            {
+                Id = eventObj.Id.ToString(),
+                Date = new string(
+                    $"{eventObj.DateOnly.Year:0000}-{eventObj.DateOnly.Month:00}-{eventObj.DateOnly.Day:00}"),
+                Time = new string(
+                    $"{eventObj.TimeOnly.Hour:00}:{eventObj.TimeOnly.Minute:00}:{eventObj.TimeOnly.Second:00}"),
+                Description = eventObj.Description,
+                Status = eventObj.Status,
+                Organiser = new EventUserObject
+                {
+                    Id = eventObj.Organiser.Id,
+                    Username = eventObj.Organiser.UserName
+                },
+                Report = new ReportEventObject
+                {
+                    Description = eventObj.Report.Description,
+                    Location = new LocationEventObject
+                    {
+                        Latitude = eventObj.Report.Location.Latitude,
+                        Longitude = eventObj.Report.Location.Longitude,
+                        Size = eventObj.Report.Location.Size
+                    }
+                }
+            };
+            if (!proofIsNull)
+                obj.Validation = ByteString.CopyFrom(eventObj.Validation);
+            events.Add(obj);
+        }
+
+        return await Task.FromResult(new EventList
+        {
+            Events = { events }
+        });
+    }
 }

@@ -20,10 +20,37 @@ public class ReportDao : IReportDao
     public async Task<IEnumerable<Model.Report>> GetAsync(string email, bool approved)
     {
         IQueryable<Model.Report>? reportsQuery = null;
-        if (approved)
+        
+        IQueryable<string> roleQuery = context.Roles
+            .Join(context.UserRoles,
+                role => role.Id,
+                userRole => userRole.RoleId,
+                (role, userRole) => new
+                {
+                    Role = role,
+                    UserRole = userRole
+                })
+            .Join(context.Users,
+                userRole => userRole.UserRole.UserId,
+                user => user.Id,
+                (userRole, user) => new
+                {
+                    Role = userRole.Role,
+                    UserRole = userRole.UserRole,
+                    User = user
+                }
+            )
+            .Where(user => user.User.Email.Equals(email))
+            .Select(role => role.Role.Name)
+            .AsQueryable();
+            
+        IEnumerable<string> roleList = await roleQuery.ToListAsync();
+        string role = roleList.ToList()[0];
+        
+        if (role.Equals("Admin"))
         {
             reportsQuery = context.Reports
-                .Where(report => report.Status.Equals("Approved"))
+                .Where(report => report.Status.Equals("Under Review"))
                 .Include(report => report.User)
                 .Include(report => report.Location)
                 .Select(r => new Model.Report
@@ -38,38 +65,13 @@ public class ReportDao : IReportDao
                 })
                 .AsQueryable();
         }
-        else
+        else if (role.Equals("User"))
         {
-            IQueryable<string> roleQuery = context.Roles
-                .Join(context.UserRoles,
-                    role => role.Id,
-                    userRole => userRole.RoleId,
-                    (role, userRole) => new
-                    {
-                        Role = role,
-                        UserRole = userRole
-                    })
-                .Join(context.Users,
-                    userRole => userRole.UserRole.UserId,
-                    user => user.Id,
-                    (userRole, user) => new
-                    {
-                        Role = userRole.Role,
-                        UserRole = userRole.UserRole,
-                        User = user
-                    }
-                )
-                .Where(user => user.User.Email.Equals(email))
-                .Select(role => role.Role.Name)
-                .AsQueryable();
-            
-            IEnumerable<string> roleList = await roleQuery.ToListAsync();
-            string role = roleList.ToList()[0];
-            
-            if (role.Equals("Admin"))
+            //Display reports ready for events
+            if (approved)
             {
                 reportsQuery = context.Reports
-                    .Where(report => report.Status.Equals("Under Review"))
+                    .Where(report => report.Status.Equals("Approved"))
                     .Include(report => report.User)
                     .Include(report => report.Location)
                     .Select(r => new Model.Report
@@ -86,24 +88,25 @@ public class ReportDao : IReportDao
             }
             else
             {
+                //Display all report create by me
                 reportsQuery = context.Reports
                     .Where(report => report.User.Email.Equals(email))
                     .Include(report => report.User)
                     .Include(report => report.Location)
                     .Select(r => new Model.Report
                     {
-                        Id = r.Id,
-                        DateOnly = r.DateOnly,
-                        TimeOnly = r.TimeOnly,
-                        Description = r.Description,
-                        User = r.User,
-                        Status = r.Status,
+                        Id = r.Id, 
+                        DateOnly = r.DateOnly, 
+                        TimeOnly = r.TimeOnly, 
+                        Description = r.Description, 
+                        User = r.User, 
+                        Status = r.Status, 
                         Location = r.Location
                     })
                     .AsQueryable();
             }
         }
-
+        
         IEnumerable<Model.Report> result = await reportsQuery!.ToListAsync();
 
         return result;
