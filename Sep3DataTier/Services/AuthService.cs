@@ -17,8 +17,8 @@ public class AuthService : Auth.AuthBase
     public override async Task<UserOutput> Register(RegisterUserInput request, ServerCallContext context)
     {
         ApplicationUser userToCreate = new ApplicationUser(request.Email, request.Username);
-        ApplicationUser user = await userDao.RegisterUserAsync(userToCreate, request.Password);
-        
+        ApplicationUser user = await userDao.RegisterUserAsync(userToCreate, request.Password, request.Role);
+
         var userRole = await userDao.GetUserRoleAsync(user);
         
         return await Task.FromResult(new UserOutput
