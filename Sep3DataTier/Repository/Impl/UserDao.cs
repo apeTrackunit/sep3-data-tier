@@ -19,7 +19,7 @@ public class UserDao : IUserDao
         this.userManager = userManager;
     }
 
-    public async Task<ApplicationUser> RegisterUserAsync(ApplicationUser user, string password)
+    public async Task<ApplicationUser> RegisterUserAsync(ApplicationUser user, string password, string role)
     {
         try
         {
@@ -27,7 +27,7 @@ public class UserDao : IUserDao
             
             if (result.Succeeded)
             {
-                await userManager.AddToRoleAsync(user, "User");
+                await userManager.AddToRoleAsync(user, role);
             }
 
             return result.Succeeded ? user : throw new Exception("User was not created " + result.ToJson());
