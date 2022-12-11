@@ -70,7 +70,7 @@ public class EventService : Sep3DataTier.Event.EventBase
         return reply;
     }
 
-    public override async Task<EventList> GetEvents(EventFilter request, ServerCallContext context)
+    public override async Task<EventList> GetEvents(EventsFilter request, ServerCallContext context)
     {
         ICollection<EventObject> events = new List<EventObject>();
         IEnumerable<Event> eventsInDatabase = await eventDao.GetEventsAsync();
@@ -111,5 +111,52 @@ public class EventService : Sep3DataTier.Event.EventBase
         {
             Events = { events }
         });
+    }
+    
+    public override async Task<EventObject> GetEvent(EventFilter request, ServerCallContext context)
+    {
+        Event eventObj = await eventDao.GetEventAsync(request.Id);
+        bool proofIsNull = eventObj.Validation == null;
+        
+        EventObject obj = new EventObject
+        {
+            Id = eventObj.Id.ToString(), 
+            Date = new string(
+                    $"{eventObj.DateOnly.Year:0000}-{eventObj.DateOnly.Month:00}-{eventObj.DateOnly.Day:00}"), 
+            Time = new string(
+                    $"{eventObj.TimeOnly.Hour:00}:{eventObj.TimeOnly.Minute:00}:{eventObj.TimeOnly.Second:00}"), 
+            Description = eventObj.Description, 
+            Organiser = new UserEventObject() 
+            {
+                Id = eventObj.Organiser.Id, 
+                Username = eventObj.Organiser.UserName
+            },
+            Report = new ReportEventObject 
+            {
+                Description = eventObj.Report.Description, 
+                Location = new LocationEventObject 
+                {
+                    Latitude = eventObj.Report.Location.Latitude, 
+                    Longitude = eventObj.Report.Location.Longitude, 
+                    Size = eventObj.Report.Location.Size
+                }
+            }
+        };
+        if (!proofIsNull) 
+            obj.Validation = ByteString.CopyFrom(eventObj.Validation);
+        
+        return await Task.FromResult(obj);
+    }
+    
+    public override async Task<ApproveEventResult> ApproveEvent(ApproveEventFilter request, ServerCallContext context)
+    {
+        string confirmation = await eventDao.ApproveEventAsync(request.Id, request.Approve);
+
+        ApproveEventResult response = new ApproveEventResult()
+        {
+            Confirmation = confirmation
+        };
+        
+        return await Task.FromResult(response);
     }
 }
