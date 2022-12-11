@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Sep3DataTier.Database;
@@ -11,9 +12,10 @@ using Sep3DataTier.Database;
 namespace Sep3DataTier.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20221211123215_AddApproved")]
+    partial class AddApproved
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,15 +52,15 @@ namespace Sep3DataTier.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "276da8e3-2222-4fd5-bcff-2deb2c62e610",
-                            ConcurrencyStamp = "f65a240d-3aca-4673-8f04-df7648139280",
+                            Id = "65c62e66-592d-4e41-8d3d-554254cc4104",
+                            ConcurrencyStamp = "a0930151-08b9-4100-b79a-afd14ad5fb7e",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "54fedc6c-612e-4f84-b4e9-e8de24c6519e",
-                            ConcurrencyStamp = "9c14d40c-1495-4529-a62f-473298b7312b",
+                            Id = "c2fd2a8c-d114-4fc3-a843-72fb89d383fb",
+                            ConcurrencyStamp = "a942f96e-4116-4d84-a771-927ba2204036",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });

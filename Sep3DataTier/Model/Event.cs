@@ -16,6 +16,7 @@ public class Event
     public byte[]? Validation { get; set; }
     public ApplicationUser Organiser { get; set; }
     public Report Report { get; set; }
+    public bool Approved { get; set; }
 
     public Event()
     {
