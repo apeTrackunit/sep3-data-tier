@@ -140,7 +140,8 @@ public class EventService : Sep3DataTier.Event.EventBase
                     Longitude = eventObj.Report.Location.Longitude, 
                     Size = eventObj.Report.Location.Size
                 }
-            }
+            },
+            Approved = eventObj.Approved
         };
         if (!proofIsNull) 
             obj.Validation = ByteString.CopyFrom(eventObj.Validation);
