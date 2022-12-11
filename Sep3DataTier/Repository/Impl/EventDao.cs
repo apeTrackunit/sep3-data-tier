@@ -98,8 +98,9 @@ public class EventDao : IEventDao
                 case "Upcoming":
                 {
                     eventQuery = context.Events
-                        .Where(e => e.DateOnly >= DateOnly.FromDateTime(DateTime.Now) &&
-                                    e.TimeOnly >= TimeOnly.FromDateTime(DateTime.Now))
+                        .Where(e => 
+                                e.DateOnly > DateOnly.FromDateTime(DateTime.Now) ||
+                                (e.DateOnly == DateOnly.FromDateTime(DateTime.Now) && e.TimeOnly > TimeOnly.FromDateTime(DateTime.Now)))
                         .Include(e => e.Organiser)
                         .Include(e => e.Report)
                         .Include(e => e.Report.Location)
