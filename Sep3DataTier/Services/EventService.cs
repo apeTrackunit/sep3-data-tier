@@ -72,21 +72,18 @@ public class EventService : Sep3DataTier.Event.EventBase
 
     public override async Task<EventList> GetEvents(EventsFilter request, ServerCallContext context)
     {
-        ICollection<EventObject> events = new List<EventObject>();
-        IEnumerable<Event> eventsInDatabase = await eventDao.GetEventsAsync();
+        ICollection<EventObject> data = new List<EventObject>();
+        IEnumerable<Event> eventsInDatabase = await eventDao.GetEventsAsync(request.Email, request.Filter);
 
         foreach (Event eventObj in eventsInDatabase)
         {
-            bool proofIsNull = eventObj.Validation == null;
             EventObject obj = new EventObject
             {
                 Id = eventObj.Id.ToString(),
-                Date = new string(
-                    $"{eventObj.DateOnly.Year:0000}-{eventObj.DateOnly.Month:00}-{eventObj.DateOnly.Day:00}"),
-                Time = new string(
-                    $"{eventObj.TimeOnly.Hour:00}:{eventObj.TimeOnly.Minute:00}:{eventObj.TimeOnly.Second:00}"),
+                Date = new string($"{eventObj.DateOnly.Year:0000}-{eventObj.DateOnly.Month:00}-{eventObj.DateOnly.Day:00}"),
+                Time = new string($"{eventObj.TimeOnly.Hour:00}:{eventObj.TimeOnly.Minute:00}:{eventObj.TimeOnly.Second:00}"),
                 Description = eventObj.Description,
-                Organiser = new UserEventObject()
+                Organiser = new UserEventObject
                 {
                     Id = eventObj.Organiser.Id,
                     Username = eventObj.Organiser.UserName
@@ -100,16 +97,15 @@ public class EventService : Sep3DataTier.Event.EventBase
                         Longitude = eventObj.Report.Location.Longitude,
                         Size = eventObj.Report.Location.Size
                     }
-                }
+                },
+                Approved = eventObj.Approved
             };
-            if (!proofIsNull)
-                obj.Validation = ByteString.CopyFrom(eventObj.Validation);
-            events.Add(obj);
+            data.Add(obj);
         }
 
         return await Task.FromResult(new EventList
         {
-            Events = { events }
+            Events = { data }
         });
     }
     
