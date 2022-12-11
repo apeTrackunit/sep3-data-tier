@@ -5,7 +5,8 @@ using Model;
 public interface IEventDao
 {
     Task<Event> CreateEventAsync(Model.Event cleaningEvent);
-    Task<List<Event>> GetEventsAsync();
+    Task<IEnumerable<Event>> GetEventsAsync(string email, string filter);
+    Task<Event> GetEventByIdAsync(string id);
     Task<Event> GetEventAsync(string id);
     Task<string> ApproveEventAsync(string id, bool approve);
 }
