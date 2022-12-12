@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Sep3DataTier.Repository.Impl;
 
@@ -18,7 +19,7 @@ public class EventDao : IEventDao
 
     public async Task<Event> CreateEventAsync(Event cleaningEvent)
     {
-        EntityEntry<Model.Event> result = await context.Events.AddAsync(cleaningEvent);
+        EntityEntry<Event> result = await context.Events.AddAsync(cleaningEvent);
         await context.SaveChangesAsync();
         return result.Entity;
     }
@@ -98,9 +99,10 @@ public class EventDao : IEventDao
                 case "Upcoming":
                 {
                     eventQuery = context.Events
-                        .Where(e => 
-                                e.DateOnly > DateOnly.FromDateTime(DateTime.Now) ||
-                                (e.DateOnly == DateOnly.FromDateTime(DateTime.Now) && e.TimeOnly > TimeOnly.FromDateTime(DateTime.Now)))
+                        .Where(e =>
+                            e.DateOnly > DateOnly.FromDateTime(DateTime.Now) ||
+                            (e.DateOnly == DateOnly.FromDateTime(DateTime.Now) &&
+                             e.TimeOnly > TimeOnly.FromDateTime(DateTime.Now)))
                         .Include(e => e.Organiser)
                         .Include(e => e.Report)
                         .Include(e => e.Report.Location)
@@ -130,6 +132,8 @@ public class EventDao : IEventDao
             .Where(e => e.Id.Equals(Guid.Parse(id)))
             .Include(e => e.Organiser)
             .Include(e => e.Report)
+            .Include(e => e.Attendees)
+            .Include(e => e.Report.Location)
             .FirstOrDefault();
 
         if (foundEvent == null)
@@ -138,17 +142,6 @@ public class EventDao : IEventDao
         return await Task.FromResult(foundEvent);
     }
 
-    public async Task<Event> GetEventAsync(string id)
-    {
-        var eventObj = await context.Events
-            .Where(ev => ev.Id.Equals(Guid.Parse(id)))
-            .Include(ev => ev.Report.Location)
-            .Include(ev => ev.Organiser).FirstOrDefaultAsync();
-        if (eventObj == null)
-            throw new Exception($"Event with {id} could not be found!");
-        
-        return eventObj;
-    }
 
     public async Task<string> ApproveEventAsync(string id, bool approve)
     {
@@ -158,7 +151,7 @@ public class EventDao : IEventDao
         {
             throw new Exception($"Event with {id} could not be found!");
         }
-        
+
         if (approve)
         {
             eventObject.Approved = approve;
@@ -167,9 +160,19 @@ public class EventDao : IEventDao
         {
             context.Events.Remove(eventObject);
         }
-        
+
         await context.SaveChangesAsync();
 
         return await Task.FromResult("Event approval updated!");
+    }
+
+    public async Task<string> AttendEventAsync(string id, ApplicationUser user)
+    {
+        var eventToAttend = GetEventByIdAsync(id).Result;
+
+        eventToAttend.Attendees.Add(user);
+        await context.SaveChangesAsync();
+
+        return await Task.FromResult("Successfully signed up for an event!");
     }
 }

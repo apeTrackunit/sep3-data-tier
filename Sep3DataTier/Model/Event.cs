@@ -1,6 +1,7 @@
 ﻿
 
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Model;
 
@@ -17,6 +18,9 @@ public class Event
     public ApplicationUser Organiser { get; set; }
     public Report Report { get; set; }
     public bool Approved { get; set; }
+    
+    [NotMapped]
+    public virtual ICollection<ApplicationUser> Attendees { get; set; }
 
     public Event()
     {

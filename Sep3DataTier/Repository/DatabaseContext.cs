@@ -12,14 +12,13 @@ public class DatabaseContext : IdentityDbContext<ApplicationUser, IdentityRole, 
     public DbSet<Model.Report> Reports { get; set; }
 
     public DbSet<ApplicationUser> Users { get; set; }
-    
+
     public DbSet<Model.Event> Events { get; set; }
 
     public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)
     {
-        
     }
-    
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseNpgsql("" +
@@ -38,13 +37,15 @@ public class DatabaseContext : IdentityDbContext<ApplicationUser, IdentityRole, 
         modelBuilder.Entity<ApplicationUser>().HasKey(user => user.Id);
         modelBuilder.Entity<ApplicationUser>().HasIndex(user => user.Email).IsUnique();
         modelBuilder.Entity<Model.Event>().HasKey(e => e.Id);
+        modelBuilder.Entity<Model.Event>().HasMany(e => e.Attendees)
+            .WithMany(user => user.AttendedEvents);
         modelBuilder.Entity<IdentityRole>().HasData(GenerateIdentityRole("User"));
         modelBuilder.Entity<IdentityRole>().HasData(GenerateIdentityRole("Admin"));
         base.OnModelCreating(modelBuilder);
     }
-    
+
     private static IdentityRole GenerateIdentityRole(string name)
     {
-        return new IdentityRole(name) {NormalizedName = name.ToUpperInvariant()};
+        return new IdentityRole(name) { NormalizedName = name.ToUpperInvariant() };
     }
 }
