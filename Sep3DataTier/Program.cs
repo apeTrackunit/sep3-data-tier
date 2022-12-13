@@ -1,9 +1,5 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
-using Microsoft.Extensions.DependencyInjection;
 using Model;
 using Sep3DataTier.Database;
 using Sep3DataTier.Repository;
@@ -28,7 +24,6 @@ builder.Services.AddGrpc();
 //Efc services
 builder.Services.AddScoped<IReportDao, ReportDao>();
 builder.Services.AddScoped<IUserDao, UserDao>();
-builder.Services.AddScoped<ILocationDao, LocationDao>();
 builder.Services.AddScoped<IEventDao, EventDao>();
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<DatabaseContext>();
@@ -43,4 +38,3 @@ app.MapGrpcService<AuthService>();
 app.MapGrpcService<EventService>();
 app.UseAuthentication();
 app.Run();
-

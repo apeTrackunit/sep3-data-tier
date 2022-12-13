@@ -1,32 +1,25 @@
 using System.Globalization;
-using System.Text;
 using Google.Protobuf;
 using Model;
 using Grpc.Core;
-using Sep3DataTier.Database;
-using Sep3DataTier.Migrations;
 using Sep3DataTier.Repository;
-using Sep3DataTier.Repository.Intf;
 
 namespace Sep3DataTier.Services;
 
 public class ReportService : Report.ReportBase
 {
     private readonly IReportDao reportDao;
-    private readonly ILocationDao locationDao;
     private readonly IUserDao userDao;
 
-    public ReportService(IReportDao reportDao, ILocationDao locationDao, IUserDao userDao)
+    public ReportService(IReportDao reportDao, IUserDao userDao)
     {
         this.reportDao = reportDao;
-        this.locationDao = locationDao;
         this.userDao = userDao;
     }
 
     public override async Task<ReportList> GetReports(ReportsFilter request, ServerCallContext context)
     {
         ICollection<ReportObject> data = new List<ReportObject>();
-
         IEnumerable<Model.Report> reportsFromDatabase = await reportDao.GetAsync(request.Email, request.Approved);
 
         foreach (Model.Report report in reportsFromDatabase)

@@ -28,7 +28,8 @@ message ReportList
   repeated ReportObject reports = 1;
 }
 
-message ReportObject {
+message ReportObject 
+{
   string id = 1;
   string date = 2;
   string time = 3;
@@ -45,7 +46,8 @@ message UserObject
   string username = 2;
 }
 
-message LocationObject {
+message LocationObject 
+{
   double latitude = 1;
   double longitude = 2;
   int32 size = 3;

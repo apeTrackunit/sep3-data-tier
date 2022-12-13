@@ -1,11 +1,8 @@
-﻿using Google.Protobuf;
-using Google.Protobuf.Collections;
+﻿namespace Sep3DataTier.Services;
 
-namespace Sep3DataTier.Services;
-
+using Google.Protobuf;
 using System.Globalization;
 using Grpc.Core;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Repository;
 using Repository.Intf;
 using Model;
@@ -80,7 +77,6 @@ public class EventService : Sep3DataTier.Event.EventBase
             });
             
         }
-
 
         return reply;
     }
@@ -198,7 +194,7 @@ public class EventService : Sep3DataTier.Event.EventBase
 
     public override async Task<ValidationConfirmation> SubmitValidation(Validation request, ServerCallContext context)
     {
-        string confirmation = await eventDao.SubmitValidation(request.EventId, request.Validation_.ToByteArray());
+        string confirmation = await eventDao.SubmitValidationAsync(request.EventId, request.Validation_.ToByteArray());
         return await Task.FromResult(new ValidationConfirmation
         {
             Confirmation = confirmation

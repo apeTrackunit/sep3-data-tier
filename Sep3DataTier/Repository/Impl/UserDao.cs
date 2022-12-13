@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Model;
 using NuGet.Protocol;
 using Sep3DataTier.Database;
@@ -26,27 +25,23 @@ public class UserDao : IUserDao
             var result = await userManager.CreateAsync(user, password);
             
             if (result.Succeeded)
-            {
                 await userManager.AddToRoleAsync(user, role);
-            }
 
             return result.Succeeded ? user : throw new Exception("User was not created " + result.ToJson());
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
-            throw;
+            throw new Exception(e.Message);
         }
     }
 
-    public async Task<bool> LoginUser(ApplicationUser user, string requestPassword)
+    public async Task<bool> LoginUserAsync(ApplicationUser user, string requestPassword)
     {
         var result = await userManager.CheckPasswordAsync(user, requestPassword);
 
         if (!result)
-        {
             throw new Exception("Incorrect credentials");
-        }
 
         return true;
     }
@@ -56,13 +51,9 @@ public class UserDao : IUserDao
         try
         {
             var user = await context.Users.Where(user => user.Email == email).FirstOrDefaultAsync();
-
-            //For some reason we don't have a working email normalization, therefore it is not possible to user usermanager to find by email.
-            // var user = await userManager.FindByEmailAsync(email);
+            
             if (user == null)
-            {
-                throw new Exception("User not found");
-            }
+                throw new Exception($"User with email: {email} not found");
 
             return user;
         }
@@ -86,23 +77,4 @@ public class UserDao : IUserDao
             throw new Exception(e.Message);
         }
     }
-
-    public async Task<ApplicationUser> GetUserByIdAsync(String id)
-    {
-        try
-        {
-            var result = await userManager.FindByIdAsync(id);
-
-            if (result == null)
-                throw new Exception("User was not found");
-
-            return result;
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw new Exception(e.Message);
-        }
-    }
-
 }

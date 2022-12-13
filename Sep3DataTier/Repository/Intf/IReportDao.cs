@@ -1,6 +1,4 @@
-﻿using Model;
-
-namespace Sep3DataTier.Repository;
+﻿namespace Sep3DataTier.Repository;
 
 public interface IReportDao
 {
