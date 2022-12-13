@@ -70,18 +70,17 @@ public class EventService : Sep3DataTier.Event.EventBase
                 }
             },
         };
-        //TODO attendees
-        // foreach (var attendee in attendees)
-        // {
-        //     reply.Attendees = new RepeatedField<UserEventObject>
-        //     {
-        //         new UserEventObject
-        //         {
-        //             Id = attendee.Id,
-        //             Username = attendee.UserName
-        //         }
-        //     };
-        // }
+
+        foreach (var attendee in attendees)
+        {
+            reply.Attendees.Add( new UserEventObject
+            {
+                Id = attendee.Id,
+                Username = attendee.UserName
+            });
+            
+        }
+
 
         return reply;
     }
@@ -157,16 +156,15 @@ public class EventService : Sep3DataTier.Event.EventBase
             },
             Approved = eventObj.Approved, 
         };
-        //TODO attendees
-        // obj.Attendees = new RepeatedField<UserEventObject>();
-        // foreach (var attendee in attendees)
-        // {
-        //     obj.Attendees.Add(new UserEventObject
-        //     {
-        //         Id = attendee.Id,
-        //         Username = attendee.UserName
-        //     });
-        // }
+
+        foreach (var attendee in attendees)
+        {
+            obj.Attendees.Add(new UserEventObject
+            {
+                Id = attendee.Id,
+                Username = attendee.UserName
+            });
+        }
        
         if (!proofIsNull)
             obj.Validation = ByteString.CopyFrom(eventObj.Validation);
