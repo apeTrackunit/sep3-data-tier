@@ -126,7 +126,7 @@ public class EventService : Sep3DataTier.Event.EventBase
     {
         Event eventObj = await eventDao.GetEventByIdAsync(request.Id);
         ICollection<ApplicationUser> attendees = eventObj.Attendees;
-        bool proofIsNull = eventObj.Validation == null;
+        bool validationIsNull = eventObj.Validation == null;
         EventObject obj = new EventObject
         {
             Id = eventObj.Id.ToString(),
@@ -148,7 +148,8 @@ public class EventService : Sep3DataTier.Event.EventBase
                     Latitude = eventObj.Report.Location.Latitude,
                     Longitude = eventObj.Report.Location.Longitude,
                     Size = eventObj.Report.Location.Size
-                }
+                },
+                Proof = ByteString.CopyFrom(eventObj.Report.Proof)
             },
             Approved = eventObj.Approved, 
         };
@@ -162,7 +163,7 @@ public class EventService : Sep3DataTier.Event.EventBase
             });
         }
        
-        if (!proofIsNull)
+        if (!validationIsNull)
             obj.Validation = ByteString.CopyFrom(eventObj.Validation);
         return await Task.FromResult(obj);
     }
