@@ -178,7 +178,7 @@ public class EventDao : IEventDao
             .Include(e => e.Attendees)
             .Include(e => e.Report.Location)
             .FirstOrDefault();
-
+        
         if (foundEvent == null)
             throw new Exception($"Event with {id} could not be found!");
 
