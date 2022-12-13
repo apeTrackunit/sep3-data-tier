@@ -12,10 +12,10 @@ using Model;
 public class EventDao : IEventDao
 {
     private readonly DatabaseContext context;
-
     public EventDao(DatabaseContext context)
     {
         this.context = context;
+        
     }
 
     public async Task<Event> CreateEventAsync(Event cleaningEvent)
@@ -28,7 +28,6 @@ public class EventDao : IEventDao
     public async Task<IEnumerable<Event>> GetEventsAsync(string email, string filter)
     {
         IQueryable<Event>? eventQuery = null;
-
         IQueryable<string> roleQuery = context.Roles
             .Join(context.UserRoles,
                 role => role.Id,
@@ -69,7 +68,7 @@ public class EventDao : IEventDao
                     Description = e.Description,
                     Validation = e.Validation,
                     Organiser = e.Organiser,
-                    Report = e.Report
+                    Report = e.Report,
                 })
                 .AsQueryable();
         }
@@ -92,7 +91,7 @@ public class EventDao : IEventDao
                             Description = e.Description,
                             Validation = e.Validation,
                             Organiser = e.Organiser,
-                            Report = e.Report
+                            Report = e.Report,
                         })
                         .AsQueryable();
                     break;
@@ -140,9 +139,28 @@ public class EventDao : IEventDao
                             Description = e.Description,
                             Validation = e.Validation,
                             Organiser = e.Organiser,
-                            Report = e.Report
+                            Report = e.Report,
                         })
                         .AsQueryable();
+                    break;
+                }
+                case "Attended by me":
+                {
+                    eventQuery = context.Events.Where(e => e.Attendees.Any(user => user.Email.Equals(email)))
+                        .Include(e => e.Organiser)
+                        .Include(e => e.Report)
+                        .Include(e => e.Report.Location)
+                        .Include(e => e.Attendees)
+                        .Select(e => new Event
+                        {
+                            Id = e.Id,
+                            DateOnly = e.DateOnly,
+                            TimeOnly = e.TimeOnly,
+                            Description = e.Description,
+                            Validation = e.Validation,
+                            Organiser = e.Organiser,
+                            Report = e.Report,
+                        }).AsQueryable();
                     break;
                 }
             }
