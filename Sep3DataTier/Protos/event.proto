@@ -9,6 +9,7 @@ service Event
   rpc GetEvent(EventFilter) returns (EventObject);
   rpc ApproveEvent(ApproveEventFilter) returns (ApproveEventResult);
   rpc AttendEvent(EventToAttend) returns (EventToAttendConfirmation);
+  rpc SubmitValidation(Validation) returns (ValidationConfirmation);
 }
 
 message CreateEventObject
@@ -88,6 +89,17 @@ message EventToAttend
 }
 
 message EventToAttendConfirmation
+{
+  string confirmation = 1;
+}
+
+message Validation
+{
+  string eventId = 1;
+  bytes validation = 2;
+}
+
+message ValidationConfirmation
 {
   string confirmation = 1;
 }

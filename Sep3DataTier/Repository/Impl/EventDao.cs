@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using MessagePack.Formatters;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Sep3DataTier.Repository.Impl;
@@ -55,7 +56,7 @@ public class EventDao : IEventDao
         if (role.Equals("Admin"))
         {
             eventQuery = context.Events
-                .Where(e => e.Validation != null)
+                .Where(e => e.Validation != null && !e.Approved)
                 .Include(e => e.Organiser)
                 .Include(e => e.Report)
                 .Include(e => e.Report.Location)
@@ -98,10 +99,35 @@ public class EventDao : IEventDao
                 case "Upcoming":
                 {
                     eventQuery = context.Events
-                        .Where(e =>
+                        .Where(e => 
                             e.DateOnly > DateOnly.FromDateTime(DateTime.Now) ||
-                            (e.DateOnly == DateOnly.FromDateTime(DateTime.Now) &&
-                             e.TimeOnly > TimeOnly.FromDateTime(DateTime.Now)))
+                            e.DateOnly == DateOnly.FromDateTime(DateTime.Now) &&
+                            e.TimeOnly > TimeOnly.FromDateTime(DateTime.Now))
+                        .Include(e => e.Organiser)
+                        .Include(e => e.Report)
+                        .Include(e => e.Report.Location)
+                        .Select(e => new Event
+                        {
+                            Id = e.Id,
+                            DateOnly = e.DateOnly,
+                            TimeOnly = e.TimeOnly,
+                            Description = e.Description,
+                            Validation = e.Validation,
+                            Organiser = e.Organiser,
+                            Report = e.Report
+                        })
+                        .AsQueryable();
+                    break;
+                }
+                case "Awaiting validation":
+                {
+                    eventQuery = context.Events
+                        .Where(e => 
+                            (e.DateOnly < DateOnly.FromDateTime(DateTime.Now) ||
+                            e.DateOnly == DateOnly.FromDateTime(DateTime.Now) &&
+                            e.TimeOnly < TimeOnly.FromDateTime(DateTime.Now)) &&
+                            e.Organiser.Email.Equals(email) &&
+                            e.Validation == null)
                         .Include(e => e.Organiser)
                         .Include(e => e.Report)
                         .Include(e => e.Report.Location)
@@ -192,5 +218,18 @@ public class EventDao : IEventDao
         await context.SaveChangesAsync();
 
         return await Task.FromResult("Successfully signed up for an event!");
+    }
+
+    public async Task<string> SubmitValidation(string id, byte[] validation)
+    {
+        Event? foundEvent = context.Events.FirstOrDefaultAsync(e => e.Id.Equals(Guid.Parse(id))).Result;
+
+        if (foundEvent == null)
+            return await Task.FromResult($"Event with id: {id} not found!");
+
+        foundEvent.Validation = validation;
+        await context.SaveChangesAsync();
+
+        return await Task.FromResult("Validation submitted");
     }
 }

@@ -70,6 +70,7 @@ public class EventService : Sep3DataTier.Event.EventBase
                 }
             },
         };
+
         foreach (var attendee in attendees)
         {
             reply.Attendees.Add( new UserEventObject
@@ -79,6 +80,7 @@ public class EventService : Sep3DataTier.Event.EventBase
             });
             
         }
+
 
         return reply;
     }
@@ -154,6 +156,7 @@ public class EventService : Sep3DataTier.Event.EventBase
             },
             Approved = eventObj.Approved, 
         };
+
         foreach (var attendee in attendees)
         {
             obj.Attendees.Add(new UserEventObject
@@ -191,5 +194,14 @@ public class EventService : Sep3DataTier.Event.EventBase
         };
 
         return await Task.FromResult(response);
+    }
+
+    public override async Task<ValidationConfirmation> SubmitValidation(Validation request, ServerCallContext context)
+    {
+        string confirmation = await eventDao.SubmitValidation(request.EventId, request.Validation_.ToByteArray());
+        return await Task.FromResult(new ValidationConfirmation
+        {
+            Confirmation = confirmation
+        });
     }
 }
