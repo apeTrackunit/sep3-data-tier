@@ -1,6 +1,4 @@
-﻿using MessagePack.Formatters;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Sep3DataTier.Repository.Impl;
 
@@ -146,7 +144,8 @@ public class EventDao : IEventDao
                 }
                 case "Attended by me":
                 {
-                    eventQuery = context.Events.Where(e => e.Attendees.Any(user => user.Email.Equals(email)))
+                    eventQuery = context.Events
+                        .Where(e => e.Attendees.Any(user => user.Email.Equals(email)))
                         .Include(e => e.Organiser)
                         .Include(e => e.Report)
                         .Include(e => e.Report.Location)
@@ -192,18 +191,12 @@ public class EventDao : IEventDao
         var eventObject = context.Events.FirstOrDefaultAsync(ev => ev.Id.Equals(Guid.Parse(id))).Result;
 
         if (eventObject == null)
-        {
             throw new Exception($"Event with {id} could not be found!");
-        }
 
         if (approve)
-        {
             eventObject.Approved = approve;
-        }
         else
-        {
             context.Events.Remove(eventObject);
-        }
 
         await context.SaveChangesAsync();
 
@@ -220,7 +213,7 @@ public class EventDao : IEventDao
         return await Task.FromResult("Successfully signed up for an event!");
     }
 
-    public async Task<string> SubmitValidation(string id, byte[] validation)
+    public async Task<string> SubmitValidationAsync(string id, byte[] validation)
     {
         Event? foundEvent = context.Events.FirstOrDefaultAsync(e => e.Id.Equals(Guid.Parse(id))).Result;
 

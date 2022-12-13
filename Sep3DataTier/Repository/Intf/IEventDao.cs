@@ -9,5 +9,5 @@ public interface IEventDao
     Task<Event> GetEventByIdAsync(string id);
     Task<string> ApproveEventAsync(string id, bool approve);
     Task<string> AttendEventAsync(string id, ApplicationUser user);
-    Task<string> SubmitValidation(string id, byte[] validation);
+    Task<string> SubmitValidationAsync(string id, byte[] validation);
 }

@@ -11,6 +11,10 @@ public class ApplicationUser : IdentityUser
     [NotMapped]
     public virtual ICollection<Event> AttendedEvents { get; set; }
 
+    public ApplicationUser()
+    {
+    }
+
     public ApplicationUser(string email, string username)
     {
         Email = email;
