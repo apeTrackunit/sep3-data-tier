@@ -72,14 +72,12 @@ public class EventService : Sep3DataTier.Event.EventBase
         };
         foreach (var attendee in attendees)
         {
-            reply.Attendees = new RepeatedField<UserEventObject>
+            reply.Attendees.Add( new UserEventObject
             {
-                new UserEventObject
-                {
-                    Id = attendee.Id,
-                    Username = attendee.UserName
-                }
-            };
+                Id = attendee.Id,
+                Username = attendee.UserName
+            });
+            
         }
 
         return reply;
@@ -156,7 +154,6 @@ public class EventService : Sep3DataTier.Event.EventBase
             },
             Approved = eventObj.Approved, 
         };
-        obj.Attendees = new RepeatedField<UserEventObject>();
         foreach (var attendee in attendees)
         {
             obj.Attendees.Add(new UserEventObject
