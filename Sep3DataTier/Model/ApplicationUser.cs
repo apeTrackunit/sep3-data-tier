@@ -16,9 +16,4 @@ public class ApplicationUser : IdentityUser
         Email = email;
         UserName = username;
     }
-
-    public ApplicationUser()
-    {
-        
-    }
 }
