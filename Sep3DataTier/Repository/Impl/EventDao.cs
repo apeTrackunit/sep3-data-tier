@@ -100,7 +100,7 @@ public class EventDao : IEventDao
                         .Where(e => 
                             e.DateOnly > DateOnly.FromDateTime(DateTime.Now) ||
                             e.DateOnly == DateOnly.FromDateTime(DateTime.Now) &&
-                            e.TimeOnly > TimeOnly.FromDateTime(DateTime.Now))
+                            e.TimeOnly > TimeOnly.FromDateTime(DateTime.Now.AddHours(+1)))
                         .Include(e => e.Organiser)
                         .Include(e => e.Report)
                         .Include(e => e.Report.Location)
@@ -123,7 +123,7 @@ public class EventDao : IEventDao
                         .Where(e => 
                             (e.DateOnly < DateOnly.FromDateTime(DateTime.Now) ||
                             e.DateOnly == DateOnly.FromDateTime(DateTime.Now) &&
-                            e.TimeOnly < TimeOnly.FromDateTime(DateTime.Now)) &&
+                            e.TimeOnly < TimeOnly.FromDateTime(DateTime.Now.AddHours(+1))) &&
                             e.Organiser.Email.Equals(email) &&
                             e.Validation == null)
                         .Include(e => e.Organiser)
