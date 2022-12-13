@@ -68,7 +68,6 @@ public class EventDao : IEventDao
                     Validation = e.Validation,
                     Organiser = e.Organiser,
                     Report = e.Report,
-                    Attendees = e.Attendees
                 })
                 .AsQueryable();
         }
